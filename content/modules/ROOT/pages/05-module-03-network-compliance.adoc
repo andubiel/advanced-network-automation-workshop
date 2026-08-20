@@ -63,7 +63,7 @@ image::workflow_nodes.png[compliance,align="center",link=self,window=blank,width
 +
 image:exit_visualizer.png[compliance,align="center",link=self,window=blank,width=800]
 +
-. Select *Survey* and click *Create new survey*
+. Select *Survey* and click *Create survey question*
 +
 image:create_survey.png[compliance,align="center",link=self,window=blank,width=800]
 +
