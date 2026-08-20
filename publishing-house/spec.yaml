@@ -63,8 +63,8 @@ spec:
       status: not_started
   environment:
     platform: "rhel-vms"       # ocp | rhel-vms — determines which sizing fields apply
-    topology: ""               # shared-cluster | per-student | cnv-pool
-    cloud_provider: cnv        # cnv | aws | troshka — cnv is default
+    topology: "per-student"     # shared-cluster | per-student | cnv-pool
+    cloud_provider: troshka    # cnv | aws | troshka — cnv is default
     max_concurrent_users: null # required if topology = shared-cluster
 
     # --- OCP-specific fields (only when platform = ocp) ---
@@ -83,15 +83,15 @@ spec:
     vms_per_student:
       - role: "containerlab"
         count: 1
-        cpu: null
-        ram_gb: null
-        disk_gb: null
+        cpu: 16
+        ram_gb: 64
+        disk_gb: 100
         os: "rhel"
       - role: "control"
         count: 1
-        cpu: null
-        ram_gb: null
-        disk_gb: null
+        cpu: 8
+        ram_gb: 32
+        disk_gb: 50
         os: "rhel"
 
     # --- Common fields (both platforms) ---
@@ -102,7 +102,9 @@ spec:
     ai_justification: ""               # required if ai_model_tier = frontier or ai_requirement = gpu
     non_ga_products: []                # list of non-GA products/versions
     non_ga_access_plan: ""             # how access is provided for non-GA products
-    external_services: []              # named external service dependencies e.g. [github.com]
+    external_services:                 # named external service dependencies e.g. [github.com]
+      - "registry.gitlab.com"
+      - "gitlab.com"
     gpu_nodes: 0                       # number of GPU nodes (0 = none)
     gpu_type: ""                       # e.g. NVIDIA A100 40GB (required if gpu_nodes > 0)
   duration_hours: 3

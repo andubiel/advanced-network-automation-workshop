@@ -75,14 +75,16 @@ Setup automation must provision: Containerlab topology with 6 network devices an
 
 ## Infrastructure Requirements
 
-- **Cloud provider:** TBD -- confirmed in infrastructure phase
+- **Cloud provider:** Troshka (nested virtualization required for Containerlab with Cisco n9kv and Arista vEOS)
 - **Cluster type:** N/A (rhel-vms platform, no OCP cluster)
 - **OCP version:** N/A (rhel-vms platform)
-- **Topology:** TBD -- confirmed in infrastructure phase
-- **Sizing:** TBD -- confirmed in infrastructure phase (2 VMs: "containerlab" bastion and "control" AAP host; resource requirements to be determined)
+- **Topology:** Per-student
+- **Sizing:** 2 VMs per student:
+  - 1 containerlab VM (16 vCPU, 64GB RAM, 100GB disk) — Containerlab with 6 network devices + 4 Linux hosts, Netbox, Gitea, VS Code
+  - 1 control VM (8 vCPU, 32GB RAM, 50GB disk) — AAP Controller
 - **Automation approach:** Ansible (automation_type in spec)
 - **AI/MaaS:** None
-- **External services:** None (Gitea and Netbox are self-hosted within the lab environment)
+- **External services:** registry.gitlab.com (container images for network devices), gitlab.com (clones redhatautomation/201-multi-vendor-vxlan-workshop.git)
 - **AAP version:** 2.x
 - **Non-GA products:** None (all products are GA)
 
