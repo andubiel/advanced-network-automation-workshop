@@ -150,8 +150,19 @@ approval_checklist:
         overview: "Demonstrates Ansible execution controls (serial, forks, throttle, max_fail_percentage) for safe scaled deployments with intentional error injection and canary patterns."
       - title: "Configuration Drift and Restore"
         overview: "Teaches drift detection using diff_against: intended with Git-stored reference state, and configuration restore to any named Git branch."
-    rcars_overlap_pct: null
-    rcars_top_matches: []
+    catalog_gap: "This design covers advanced, intermediate-level multi-vendor EVPN VXLAN fabric deployment, compliance enforcement with resource modules, execution tuning for safe scaled rollouts, and Git-based configuration drift detection and remediation — none of which are addressed by the existing introductory network workshop or the EDA/Netbox lab in the catalog."
+    rcars_overlap_pct: 78
+    rcars_top_matches:
+      - title: "Introduction to Ansible Network Automation Workshop"
+        ci_name: "zt-ansiblebu.ansible-network-automation-workshop.prod"
+        url: "https://catalog.demo.redhat.com/catalog?item=zt-ansiblebu.ansible-network-automation-workshop.prod"
+        relevance_score: 78
+        why_it_fits: "Covers AAP, Arista EOS, network resource modules, Git-backed SCM integration, configuration backup, and multi-vendor network automation with Containerlab."
+      - title: "Event-Driven Ansible and Netbox as a source of truth"
+        ci_name: "zt-ansiblebu.zt-ans-bu-eda-netbox.prod"
+        url: "https://catalog.demo.redhat.com/catalog?item=zt-ansiblebu.zt-ans-bu-eda-netbox.prod"
+        relevance_score: 70
+        why_it_fits: "Directly addresses Netbox as a Source of Truth and dynamic inventory with AAP integration."
     rejections: []
 
   infra:
