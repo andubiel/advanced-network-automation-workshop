@@ -1,89 +1,91 @@
-# [Project Title]
-
-<!-- This file is the design document for your lab or demo. -->
-<!-- Fill in each section below, or run /rhdp-publishing-house to have the intake skill help. -->
-<!-- Sections marked with [brackets] are placeholders — replace with real content. -->
-<!-- The validation gate checks for all required sections before submission. -->
+# Advanced Ansible Network Automation Workshop
 
 ## Overview
 
-[2-3 sentences on what this lab or demo is and why it exists. Then a direct description of what participants will do — specific enough that someone reading this section immediately understands the content without interpretation. No flowery language. Example: "Participants will deploy a 3-tier application on OpenShift, configure autoscaling, and troubleshoot a simulated pod failure."]
+This hands-on, intermediate-level lab extends the Introduction to Ansible Network Automation workshop into advanced network automation territory. Participants use Red Hat Ansible Automation Platform to deploy and validate a multi-vendor EVPN VXLAN switching fabric across Arista EOS and Cisco NX-OS devices running in Containerlab. The lab progresses through dynamic inventory setup with Netbox as a Source of Truth, Git-backed configuration backups using the ansible.scm collection, automated compliance enforcement with resource modules, full fabric deployment (base, underlay, overlay), execution tuning for safe scaled rollouts, and configuration drift detection with Git-based remediation. Throughout the workshop, participants interact with AAP Controller workflows, surveys, approval nodes, and multi-vendor resource modules.
 
 ## Target Audience
 
-- **Role:** [Data scientists, platform engineers, developers, etc.]
-- **Experience level:** [Beginner, intermediate, or advanced]
-- **What they already know:** [Existing skills and knowledge]
-- **What they don't know:** [Skills this lab teaches]
+- **Role:** Network engineers, network automation engineers, infrastructure engineers
+- **Experience level:** Intermediate (201-level, builds on introductory workshop)
+- **What they already know:** Basic networking concepts (routing, switching, VLANs, VXLAN), Linux CLI proficiency, introductory Ansible and Ansible Automation Platform usage
+- **What they don't know:** Source of Truth integration with dynamic inventory, multi-vendor resource module compliance patterns, EVPN VXLAN fabric deployment with Ansible, configuration drift detection and remediation at scale, AAP workflow orchestration with approval gates
 
 ## Prerequisites
 
-- [What the learner must know or have completed before starting]
-- [Can the lab validate these automatically? Yes/No — brief explanation]
-
-<!-- If no prerequisites, write "None" -->
+- Basic networking knowledge: routing, switching, VLANs, VXLAN concepts
+- Linux command-line proficiency
+- Recommended: completion of the Introduction to Ansible Network Automation workshop
+- Can the lab validate these automatically? Partially -- initial module validates connectivity to network devices and AAP environment
 
 ## Learning Objectives
 
-1. [Action verb] [specific, measurable outcome]
-2. [Action verb] [specific, measurable outcome]
-3. [Action verb] [specific, measurable outcome]
-
-<!-- Scale to duration: up to 3 objectives per 45 min of content. Start with action verbs: Configure, Deploy, Create, Implement, Troubleshoot, Monitor, Scale. Each should be testable. NOT: Understand, Learn, Know. -->
+1. Configure dynamic inventory using Netbox as a Source of Truth integrated with Red Hat Ansible Automation Platform
+2. Automate multi-vendor network configuration backups to Git using the ansible.scm collection
+3. Implement network compliance checks using resource modules with declarative state enforcement and AAP approval workflows
+4. Deploy a multi-vendor EVPN VXLAN switching fabric across base, underlay, and overlay configuration layers
+5. Configure Ansible execution controls (serial, forks, throttle, max_fail_percentage) for safe, scaled network deployments
+6. Implement configuration drift detection and remediation using Git-stored intended state
 
 ## Content Type
 
-[Lab (hands-on) or Demo (presenter-led)]
+Lab (hands-on)
 
 ## Products & Technologies
 
-- [Official Red Hat product name with version if relevant]
-- [Additional products/technologies]
-
-<!-- Use official names: "Red Hat OpenShift", not "OpenShift". List upstream projects separately. -->
+- Red Hat Ansible Automation Platform 2.x (Controller, Execution Environments, Job Templates, Workflows, Surveys, Approval Nodes)
+- Ansible Navigator
+- Ansible Collections: ansible.controller, ansible.scm, ansible.netcommon, ansible.utils, arista.eos, cisco.nxos, netbox.netbox
+- Arista EOS (vEOS 4.32.0F via Containerlab)
+- Cisco NX-OS (Nexus 9000v 10.5.3.F via Containerlab)
+- Containerlab
+- Netbox
+- Gitea
+- VS Code (in-browser)
+- Red Hat Enterprise Linux (bastion and control VMs)
+- Networking technologies: EVPN VXLAN, OSPF, eBGP, PIM sparse-mode, SNMP, NTP, VRF, Anycast Gateway
 
 ## Module Map
 
 | Module | Title | Duration |
 |--------|-------|----------|
-| 1 | [Module title] | [XX min] |
-| 2 | [Module title] | [XX min] |
-| — | **Total hands-on** | **[X hours]** |
-| — | Intro / presentation | [~XX min] |
-| — | **Total lab** | **[~X hours]** |
-
-<!-- Each module 10-30 min. Total: lab 1-4 hours, demo 15-45 min. Modules should build on each other. -->
+| 1 | Dynamic Inventory and Basic Setup | 30 min |
+| 2 | Backups as Code | 25 min |
+| 3 | Network Compliance | 30 min |
+| 4 | Base Configurations | 30 min |
+| 5 | Underlay Configs | 30 min |
+| 6 | Overlay Configs | 30 min |
+| 7 | Tuning for Scale | 25 min |
+| 8 | Configuration Drift and Restore | 25 min |
+| -- | **Total hands-on** | **~3.75 hours** |
+| -- | Intro / overview pages | ~15 min |
+| -- | **Total lab** | **~4 hours** |
 
 ## Difficulty Level
 
-[Beginner, Intermediate, or Advanced]
+Intermediate
 
 ## Environment
 
-**Learner view:** [What exists when the lab starts — pre-deployed resources, what participants see and interact with. Be specific about cluster details.]
+**Learner view:** Two pre-provisioned RHEL VMs are available when the lab starts. The "containerlab" VM serves as a bastion host running Containerlab with 6 network devices (2 Arista EOS spines, 2 Arista EOS leafs, 2 Cisco NX-OS leafs) and 4 Linux container hosts forming a spine-leaf EVPN VXLAN topology. The "control" VM hosts Red Hat Ansible Automation Platform with pre-configured job templates, workflows, and credentials. Netbox is pre-populated with device inventory data. Gitea hosts Git repositories for configuration backups. VS Code is accessible in-browser for file browsing and editing. Showroom provides WeTTY terminal tabs for CLI access to both VMs and network devices.
 
-**Automation needed:** [Yes/No]
+**Automation needed:** Yes
 
-[If yes, list what automation must provision — operators, per-user resources, sample apps, data sets.]
+Setup automation must provision: Containerlab topology with 6 network devices and 4 Linux hosts, Red Hat Ansible Automation Platform with pre-loaded job templates and workflows, Netbox with device and interface data, Gitea with backup repositories, VS Code server, and all required credentials and connectivity between components.
 
 ## Infrastructure Requirements
 
-- **Cloud provider:** [CNV (default), AWS, or Troshka (bare-metal/nested virt)]
-- **Cluster type:** [Multinode or SNO (Single Node OpenShift)]
-- **OCP version:** [e.g. 4.20 — minimum 4.20]
-- **Topology:** [Shared cluster, per-student, or CNV pool]
-- **Sizing:** [Node types and counts with resources — e.g., "3 control plane (16 CPU, 64GB RAM), 6 workers (8 CPU, 32GB RAM, 100GB disk)"]
-- **Automation approach:** [Ansible, GitOps (Helm + ArgoCD), or combo]
-- **AI/MaaS:** [None, MaaS (open-source model), MaaS (frontier model), or dedicated GPU — include justification if not "none"]
-- **External services:** [Named services — e.g., github.com, registry.access.redhat.com — or "None"]
-- **AAP version:** [e.g. 2.5 — only if AAP is in products; omit otherwise]
-- **Non-GA products:** [Product name + version, with access plan — or "None (all products are GA)"]
-
-<!-- Not all fields must be known at intake. "TBD, estimating ~X" is fine. -->
+- **Cloud provider:** TBD -- confirmed in infrastructure phase
+- **Cluster type:** N/A (rhel-vms platform, no OCP cluster)
+- **OCP version:** N/A (rhel-vms platform)
+- **Topology:** TBD -- confirmed in infrastructure phase
+- **Sizing:** TBD -- confirmed in infrastructure phase (2 VMs: "containerlab" bastion and "control" AAP host; resource requirements to be determined)
+- **Automation approach:** Ansible (automation_type in spec)
+- **AI/MaaS:** None
+- **External services:** None (Gitea and Netbox are self-hosted within the lab environment)
+- **AAP version:** 2.x
+- **Non-GA products:** None (all products are GA)
 
 ## Assessment Strategy (Optional)
 
-<!-- Optional — skip this section for demos or classic labs without verification. -->
-<!-- Relevant for Zero-Touch labs with solve/validate buttons or labs with automated checks. -->
-
-[If applicable: how will we know the learner successfully completed each module? Per module: verification script, solve/validate button, visible result in the UI, or automated check.]
+Each module incorporates hands-on verification steps where participants validate their work through CLI show commands on network devices (e.g., show ip ospf neighbor, show bgp evpn summary), AAP job output inspection, and connectivity tests (ping between hosts across the fabric). Module 7 includes intentional error injection to verify participants can interpret failure behavior. The final module validates end-to-end drift detection and restore capabilities. Assessment is manual through observable outcomes rather than automated solve/validate buttons.

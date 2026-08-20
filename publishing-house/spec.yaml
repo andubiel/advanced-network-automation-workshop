@@ -20,11 +20,49 @@ project:
   workflow_id: "0469fced-8193-4195-8590-fd38d7950f0a"
 
 spec:
-  title: ""
-  learning_objectives: []
-  modules: []              # [{id, title, duration_min}] — written by intake Phase 4; id is stable (e.g. module-01)
+  title: "Advanced Ansible Network Automation Workshop"
+  learning_objectives:
+    - "Configure dynamic inventory using Netbox as a Source of Truth integrated with Red Hat Ansible Automation Platform"
+    - "Automate multi-vendor network configuration backups to Git using the ansible.scm collection"
+    - "Implement network compliance checks using resource modules with declarative state enforcement and AAP approval workflows"
+    - "Deploy a multi-vendor EVPN VXLAN switching fabric across base, underlay, and overlay configuration layers"
+    - "Configure Ansible execution controls (serial, forks, throttle, max_fail_percentage) for safe, scaled network deployments"
+    - "Implement configuration drift detection and remediation using Git-stored intended state"
+  modules:
+    - id: module-01
+      title: "Dynamic Inventory and Basic Setup"
+      duration_min: 30
+      status: not_started
+    - id: module-02
+      title: "Backups as Code"
+      duration_min: 25
+      status: not_started
+    - id: module-03
+      title: "Network Compliance"
+      duration_min: 30
+      status: not_started
+    - id: module-04
+      title: "Base Configurations"
+      duration_min: 30
+      status: not_started
+    - id: module-05
+      title: "Underlay Configs"
+      duration_min: 30
+      status: not_started
+    - id: module-06
+      title: "Overlay Configs"
+      duration_min: 30
+      status: not_started
+    - id: module-07
+      title: "Tuning for Scale"
+      duration_min: 25
+      status: not_started
+    - id: module-08
+      title: "Configuration Drift and Restore"
+      duration_min: 25
+      status: not_started
   environment:
-    platform: ""               # ocp | rhel-vms — determines which sizing fields apply
+    platform: "rhel-vms"       # ocp | rhel-vms — determines which sizing fields apply
     topology: ""               # shared-cluster | per-student | cnv-pool
     cloud_provider: cnv        # cnv | aws | troshka — cnv is default
     max_concurrent_users: null # required if topology = shared-cluster
@@ -42,11 +80,23 @@ spec:
 
     # --- VM-specific fields (only when platform = rhel-vms) ---
     # Each entry: {role, count, cpu, ram_gb, disk_gb, os}
-    vms_per_student: []
+    vms_per_student:
+      - role: "containerlab"
+        count: 1
+        cpu: null
+        ram_gb: null
+        disk_gb: null
+        os: "rhel"
+      - role: "control"
+        count: 1
+        cpu: null
+        ram_gb: null
+        disk_gb: null
+        os: "rhel"
 
     # --- Common fields (both platforms) ---
-    aap_version: ""                    # required if AAP in products
-    ai_requirement: ""                 # maas | gpu | none
+    aap_version: "2.x"                # required if AAP in products
+    ai_requirement: "none"             # maas | gpu | none
     ai_model_tier: ""                  # open-source | frontier (if ai_requirement = maas or gpu)
     ai_model_name: ""                  # specific model e.g. granite-3.1-8b
     ai_justification: ""               # required if ai_model_tier = frontier or ai_requirement = gpu
@@ -55,8 +105,8 @@ spec:
     external_services: []              # named external service dependencies e.g. [github.com]
     gpu_nodes: 0                       # number of GPU nodes (0 = none)
     gpu_type: ""                       # e.g. NVIDIA A100 40GB (required if gpu_nodes > 0)
-  duration_hours: null
-  audience: ""               # beginner | intermediate | advanced
+  duration_hours: 3
+  audience: "intermediate"     # beginner | intermediate | advanced
 
 development:
   automation:
@@ -82,8 +132,24 @@ approval_checklist:
     prerequisites_verifiable: null
     assessment_strategy: ""
     catalog_gap: ""
-    design_overview: ""
-    module_summaries: []
+    design_overview: "A hands-on, intermediate-level lab where participants use Red Hat Ansible Automation Platform to deploy and validate a multi-vendor EVPN VXLAN switching fabric across Arista EOS and Cisco NX-OS devices. The workshop progresses through dynamic inventory with Netbox, Git-backed backups, compliance enforcement, full fabric deployment, execution tuning for scale, and configuration drift detection with remediation."
+    module_summaries:
+      - title: "Dynamic Inventory and Basic Setup"
+        overview: "Introduces the lab environment and guides through setting up dynamic inventory with Netbox as a Source of Truth, configuring API tokens, and validating multi-vendor device connectivity."
+      - title: "Backups as Code"
+        overview: "Automates multi-vendor network configuration backups to Git using the ansible.scm collection's git_retrieve and git_publish modules with AAP workflows."
+      - title: "Network Compliance"
+        overview: "Teaches automated compliance enforcement using resource modules with state: replaced, unified diffs for review, and AAP approval workflows for human-in-the-loop change management."
+      - title: "Base Configurations"
+        overview: "Deploys foundational fabric configuration (hostnames, VLANs, interfaces, IP addressing) using a role dispatch pattern and Backup-Deploy-Test workflow, including a troubleshooting exercise."
+      - title: "Underlay Configs"
+        overview: "Deploys OSPF and eBGP underlay routing using a hybrid approach of resource modules and Jinja2 templates, with comprehensive validation of routing adjacencies."
+      - title: "Overlay Configs"
+        overview: "Deploys the VXLAN EVPN overlay completing the fabric stack, including VTEPs, VNI mappings, VRF tenants, anycast gateways, and validates end-to-end host connectivity."
+      - title: "Tuning for Scale"
+        overview: "Demonstrates Ansible execution controls (serial, forks, throttle, max_fail_percentage) for safe scaled deployments with intentional error injection and canary patterns."
+      - title: "Configuration Drift and Restore"
+        overview: "Teaches drift detection using diff_against: intended with Git-stored reference state, and configuration restore to any named Git branch."
     rcars_overlap_pct: null
     rcars_top_matches: []
     rejections: []
