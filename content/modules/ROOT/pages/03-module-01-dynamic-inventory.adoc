@@ -36,7 +36,7 @@ image::containerlab_tab.png[Tab,align="center",link=self,window=_blank,width=800
 sudo containerlab inspect -t /home/lab-user/2_multi_vendor_vxlan/vxlan.base.clab.yml 
 ----
 
-Good output:
+Example bad output:
 
 [type:bash]
 ----
