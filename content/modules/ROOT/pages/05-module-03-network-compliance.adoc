@@ -82,6 +82,8 @@ image:question_config.png[compliance,align="center",link=self,window=blank,width
 +
 TIP: In multiple choice multiple select, hit enter to bring up the next choice box.
 +
+click enable survey question
++
 image:survey_config.png[compliance,align="center",link=self,window=blank,width=800]
 +
 WARNING: Don't forget to enable the survey!
