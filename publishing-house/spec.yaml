@@ -16,8 +16,8 @@ project:
   automation_type: "ansible"
   description: "This immersive, hands-on workshop highlights the power and capabilities of AAP in automating real-world network scenarios. As a continuation of the Introduction to Ansible Network workshop, this session introduces advanced concepts, including Source of Truth (SoT), dynamic inventories, compliance, configuration drift, and state validation. Rather than focusing on extensive playbook development from scratch, participants will explore the \"art of the possible\" by building workflows to deploy and validate a multi-vendor EVPN VXLAN switching fabric."
   # content_reviewer_email and infra_reviewer_email are assigned by the RHDP team — not set by the author
-  jira_ticket: ""
-  workflow_id: ""
+  jira_ticket: "RHDPCD-1095"
+  workflow_id: "0469fced-8193-4195-8590-fd38d7950f0a"
 
 spec:
   title: ""
