@@ -1,0 +1,16 @@
+site_name: Advanced Ansible Network Automation Workshop
+docs_dir: publishing-house/spec
+nav:
+- Home: index.md
+- Design Spec: design.md
+- Modules:
+  - Module 1 - Dynamic Inventory: modules/module-01-dynamic-inventory.md
+  - Module 2 - Backups As Code: modules/module-02-backups-as-code.md
+  - Module 3 - Network Compliance: modules/module-03-network-compliance.md
+  - Module 4 - Base Configurations: modules/module-04-base-configurations.md
+  - Module 5 - Underlay Configs: modules/module-05-underlay-configs.md
+  - Module 6 - Overlay Configs: modules/module-06-overlay-configs.md
+  - Module 7 - Tuning For Scale: modules/module-07-tuning-for-scale.md
+  - Module 8 - Configuration Drift Restore: modules/module-08-configuration-drift-restore.md
+plugins:
+- techdocs-core

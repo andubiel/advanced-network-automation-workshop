@@ -131,9 +131,8 @@ tracking:
 approval_checklist:
 
   content:
-    prerequisites_verifiable: null
-    assessment_strategy: ""
-    catalog_gap: ""
+    prerequisites_verifiable: "partial"
+    assessment_strategy: "Manual verification through CLI show commands, AAP job output inspection, and host connectivity tests per module. Module 7 includes intentional error injection."
     design_overview: "A hands-on, intermediate-level lab where participants use Red Hat Ansible Automation Platform to deploy and validate a multi-vendor EVPN VXLAN switching fabric across Arista EOS and Cisco NX-OS devices. The workshop progresses through dynamic inventory with Netbox, Git-backed backups, compliance enforcement, full fabric deployment, execution tuning for scale, and configuration drift detection with remediation."
     module_summaries:
       - title: "Dynamic Inventory and Basic Setup"
