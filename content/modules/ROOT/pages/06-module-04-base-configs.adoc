@@ -148,6 +148,8 @@ image::base_deploy.png[Deploy,align="center",link=self,window=blank,width=800]
 
 . Review the output from leaf3 for TASK [base_fabric : Configure VLANs [Cisco NX-OS]]
 +
+locate the changed for leaf3 and select the Data
++
 Below is the output from the `cisco.nxos.nxos_vlans` resource module on `leaf3`:
 +
 [source,json]
