@@ -37,7 +37,7 @@ Network device configurations represent hours of engineering work and are critic
 username: *admin* +
 password: *ansible123!*
 +
-. The survey will prompt for naming your branch. For this exercise, when prompted, name your backup branch *initial_config* and continue to run.
+. The survey will prompt for naming your branch. For this exercise, when prompted, name your backup branch *initial_config* and continue to run by clicking finished.
 +
 image::initial_config.png[Initial,align="center",link=self,window=_blank,width=800]
 +
