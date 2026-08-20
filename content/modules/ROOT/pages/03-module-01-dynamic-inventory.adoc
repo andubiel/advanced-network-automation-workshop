@@ -79,7 +79,7 @@ Example bad output:
 
 It's normal for some node types to be unhealthy, but not the state of `exited`.
 
-. If `exited`, redeploy the topology or (Your instructor may opt to assign you a new pod if spare is available)
+. If normal skip/scroll to Step 1, if `exited`, redeploy the topology or (Your instructor may opt to assign you a new pod if spare is available)
 +
 [source,bash]
 ----
