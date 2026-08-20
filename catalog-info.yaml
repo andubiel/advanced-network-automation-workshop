@@ -1,0 +1,42 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: advanced-network-automation-workshop
+  title: advanced-network-automation-workshop
+  description: This immersive, hands-on workshop highlights the power and
+    capabilities of AAP in automating real-world network scenarios. As a
+    continuation of the Introduction to Ansible Network workshop, this session
+    introduces advanced concepts, including Source of Truth (SoT), dynamic
+    inventories, compliance, configuration drift, and state validation. Rather
+    than focusing on extensive playbook development from scratch, participants
+    will explore the "art of the possible" by building workflows to deploy and
+    validate a multi-vendor EVPN VXLAN switching fabric.
+  annotations:
+    ph.rhdp.io/content-type: lab
+    ph.rhdp.io/deployment-mode: rhdp_published
+    ph.rhdp.io/github-user: andubiel
+    ph.rhdp.io/owner: tdubiel@redhat.com
+    ph.rhdp.io/migrated-repo: https://github.com/andubiel/zt-201-network-automation-workshop.git
+    backstage.io/techdocs-ref: dir:.
+    github.com/project-slug: rhpds/advanced-network-automation-workshop
+    ph.rhdp.io/created-at: 2026-08-20T02:47:21.186Z
+  tags:
+    - publishing-house
+    - lab
+    - rhdp-published
+    - migration
+  links:
+    - url: https://github.com/rhpds/advanced-network-automation-workshop
+      title: Repository
+      icon: github
+    - url: https://devspaces.apps.ocpv-infra02.wdc07.infra.demo.redhat.com#https://github.com/rhpds/advanced-network-automation-workshop
+      title: Open in DevSpaces
+      icon: catalog
+    - url: https://central-api-publishing-house.apps.ocpv-infra02.wdc07.infra.demo.redhat.com
+      title: Central
+      icon: dashboard
+spec:
+  type: content
+  lifecycle: experimental
+  owner: rhdp-team
+  system: publishing-house
