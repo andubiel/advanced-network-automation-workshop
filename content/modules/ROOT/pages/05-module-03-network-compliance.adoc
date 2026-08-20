@@ -30,7 +30,7 @@ TIP: Complete all **Step** sections on this page before clicking **Next**. Secti
 NOTE: **Level Set -- Why Workflows Matter in AAP** +
 A workflow in Ansible Automation Platform chains multiple job templates into a single, orchestrated process with built-in decision logic. Each node in a workflow can follow a **success**, **failure**, or **always** path, letting you build branching logic without writing any code -- for example, run a compliance check, and only proceed to remediation if drift is detected. Workflows also support **Approval Nodes**, which pause execution and require a human to approve before continuing -- critical for production changes where you want a review gate between detection and remediation. This turns a collection of individual playbooks into a repeatable, auditable pipeline that operators can launch with a single click from the AAP UI, complete with role-based access control and centralized logging.
 
-. Open the `workflow job-template` named `1-3-Network-Compliance-Workflow`
+. From the Ansible Automation Platform tab - Open the `workflow job-template` named `1-3-Network-Compliance-Workflow`
 +
 user: *admin* +
 password: *ansible123!*
@@ -43,7 +43,7 @@ password: *ansible123!*
 * Organization: Red Hat network organization
 * Inventory: Workshop Inventory
 +
-Click *Save*.
+Click *Save workflow job template*.
 +
 . Review the Workflow nodes from the visualizer.
 +
