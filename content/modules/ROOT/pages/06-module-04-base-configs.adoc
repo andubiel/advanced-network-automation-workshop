@@ -356,6 +356,8 @@ The `1-4-base_configs/broken_base_fabric.yml` playbook applies the following inc
           - address: "10.0.255.101/32"
 ----
 
+image::base-config-rollback.png[Rollbcak,align="center",link=self,window=blank,width=800]
+
 Upon completion of the restore, the correct IP addressing should be applied to spine1.
 
 [source,yaml]
