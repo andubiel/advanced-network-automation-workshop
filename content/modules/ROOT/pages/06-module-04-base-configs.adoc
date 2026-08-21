@@ -321,12 +321,12 @@ ok: [leaf4] => {
 }
 ----
 
+== Step 5: Launch the `1-4-Base_Configs-Workflow-Error` workflow job template
+
 In the previous steps, the workflow successfully deployed and tested, so there was no need to launch the restore job template.
 This step introduces incorrect IP addressing to fail the `Test` node on purpose. This failure will invoke the restore job template.
 
 image::base_workflow_success.png[Workflow,align="center",link=self,window=blank,width=800]
-
-== Step 5: Launch the `1-4-Base_Configs-Workflow-Error` workflow job template
 
 In production, misconfigurations happen -- whether from a bad variable, a typo in host_vars, or an upstream data error. This exercise deliberately breaks spine1's IP addressing to demonstrate how the workflow's test stage catches the error and how the restore job template recovers the device to its last known-good configuration. Learning to diagnose and recover from failures in a lab builds the confidence to handle them in production.
 
@@ -421,7 +421,6 @@ interface Ethernet4
    ip address 10.0.1.6/31
 !
 ----
-
 
 == Module summary
 
