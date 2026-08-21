@@ -33,7 +33,7 @@ Lab (hands-on)
 
 ## Products & Technologies
 
-- Red Hat Ansible Automation Platform 2.x (Controller, Execution Environments, Job Templates, Workflows, Surveys, Approval Nodes)
+- Red Hat Ansible Automation Platform 2.6 (Controller, Execution Environments, Job Templates, Workflows, Surveys, Approval Nodes)
 - Ansible Navigator
 - Ansible Collections: ansible.controller, ansible.scm, ansible.netcommon, ansible.utils, arista.eos, cisco.nxos, netbox.netbox
 - Arista EOS (vEOS 4.32.0F via Containerlab)
@@ -57,9 +57,9 @@ Lab (hands-on)
 | 6 | Overlay Configs | 30 min |
 | 7 | Tuning for Scale | 25 min |
 | 8 | Configuration Drift and Restore | 25 min |
-| -- | **Total hands-on** | **~3.75 hours** |
+| -- | **Total hands-on** | **~2 hours** |
 | -- | Intro / overview pages | ~15 min |
-| -- | **Total lab** | **~4 hours** |
+| -- | **Total lab** | **~2 hours** |
 
 ## Difficulty Level
 
@@ -85,7 +85,7 @@ Setup automation must provision: Containerlab topology with 6 network devices an
 - **Automation approach:** Ansible (automation_type in spec)
 - **AI/MaaS:** None
 - **External services:** registry.gitlab.com (container images for network devices), gitlab.com (clones redhatautomation/201-multi-vendor-vxlan-workshop.git)
-- **AAP version:** 2.x
+- **AAP version:** 2.6
 - **Non-GA products:** None (all products are GA)
 
 ## Assessment Strategy (Optional)

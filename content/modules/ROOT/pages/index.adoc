@@ -41,7 +41,7 @@ All environment details and credentials are available in the lab interface tabs.
 
 == Estimated time
 
-This workshop takes approximately **3 hours** to complete.
+This workshop takes approximately **2 hours** to complete the hands-on labs.
 
 You can work at your own pace.
 

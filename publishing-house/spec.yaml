@@ -95,7 +95,7 @@ spec:
         os: "rhel"
 
     # --- Common fields (both platforms) ---
-    aap_version: "2.x"                # required if AAP in products
+    aap_version: "2.6"                # required if AAP in products
     ai_requirement: "none"             # maas | gpu | none
     ai_model_tier: ""                  # open-source | frontier (if ai_requirement = maas or gpu)
     ai_model_name: ""                  # specific model e.g. granite-3.1-8b
@@ -107,7 +107,7 @@ spec:
       - "gitlab.com"
     gpu_nodes: 0                       # number of GPU nodes (0 = none)
     gpu_type: ""                       # e.g. NVIDIA A100 40GB (required if gpu_nodes > 0)
-  duration_hours: 3
+  duration_hours: 2
   audience: "intermediate"     # beginner | intermediate | advanced
 
 development:
