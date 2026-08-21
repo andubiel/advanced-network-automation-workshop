@@ -79,7 +79,7 @@ Example bad output:
 
 It's normal for some node types to be unhealthy, but not the state of `exited`.
 
-. If normal skip/scroll to Step 1, if `exited`, redeploy the topology or (Your instructor may opt to assign you a new pod if spare is available)
+. If normal skip/scroll to Step 1, if a device container `exited`, than redeploy the topology or (Your instructor may opt to assign you a new pod if spare is available)
 +
 [source,bash]
 ----
@@ -101,29 +101,7 @@ ssh leaf3
 
 ----
 [rhel@containerlab ~]$ ssh leaf3
-Warning: Permanently added '172.20.20.30' (RSA) to the list of known hosts.
-User Access Verification
 
-Cisco NX-OS Software
-Copyright (c) 2002-2025, Cisco Systems, Inc. All rights reserved.
-Nexus 9000v software ("Nexus 9000v Software") and related documentation,
-files or other reference materials ("Documentation") are
-the proprietary property and confidential information of Cisco
-Systems, Inc. ("Cisco") and are protected, without limitation,
-pursuant to United States and International copyright and trademark
-laws in the applicable jurisdiction which provide civil and criminal
-penalties for copying or distribution without Cisco's authorization.
-
-Any use or disclosure, in whole or in part, of the Nexus 9000v Software
-or Documentation to any third party for any purposes is expressly
-prohibited except as otherwise authorized by Cisco in writing.
-The copyrights to certain works contained herein are owned by other
-third parties and are used and distributed under license. Some parts
-of this software may be covered under the GNU Public License or the
-GNU Lesser General Public License. A copy of each such license is
-available at
-http://www.gnu.org/licenses/gpl.html and
-http://www.gnu.org/licenses/lgpl.html
 ***************************************************************************
 *  Nexus 9000v is strictly limited to use for evaluation, demonstration   *
 *  and NX-OS education. Any use or disclosure, in whole or in part of     *
@@ -146,7 +124,7 @@ Click the **VS Code** tab at the top of the Showroom window. The editor opens di
 
 image::launch_page.png[VS Code tab,align="center",link=self,window=_blank,width=600]
 
-TIP: For the best experience (especially for copy/paste operations), open VS Code in its own browser tab by clicking on VS Code's *File* and *New Window*.
+TIP: Open VS Code in its own browser tab by clicking on VS Code's *File* and *New Window*.
 
 In the VS Code file browser, open the `201-multi-vendor-vxlan-workshop/` directory:
 
