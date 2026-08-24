@@ -476,6 +476,9 @@ Taking a named backup at this point captures the fully operational VXLAN fabric 
 
 2. Name the branch *vxlan_configs*
 
+Validate the backup by **returning to the Gitea Repo tab** | **Selecting the vxlan_configs branch from the dropdown window** and
+**navigating** to **| 201-multi-vendor-vxlan-workshop | 201_network_backup_files |**
+
 == Module summary
 
 In this module, you learned how to:
