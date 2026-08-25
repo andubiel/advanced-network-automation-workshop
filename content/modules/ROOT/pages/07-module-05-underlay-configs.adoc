@@ -54,7 +54,7 @@ Resource modules give us idempotency for free, built-in validation, structured e
 |`cisco.nxos.nxos_ospfv2`
 |===
 
-== Templates where we need more control
+== Jinja2 Templates where we need more control
 
 Templates proved more reliable for these routing protocol configurations and gave us more control over the exact CLI syntax for debugging.
 
