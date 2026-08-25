@@ -94,6 +94,8 @@ Running `test_base_connectivity.yml` after this will show all four leaf-to-spine
 
 ==== Access the Ansible Automation Platform tab:
 
+Navigate to page 2 of the **Automation Templates** 
+
 user: *admin* +
 password: *ansible123!*
 
