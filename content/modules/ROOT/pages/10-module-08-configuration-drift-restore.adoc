@@ -45,7 +45,7 @@ In the previous lab section we configured *SNMP*. We should see that as a *DIFF*
 2. When prompted select your *vxlan_configs* branch
 WARNING: Your timestamp will be different.
 
-image::diff_vxlan.png[DIFF,align="center",link=self,window=_blank,width=800]
+image::diff_vxlan.png[DIFF,align="center",link=self,window=_blank]
 
 == Overview
 

@@ -98,10 +98,10 @@ This workshop showcases real-world network automation capabilities using a multi
 - **4 Teams with RBAC**: Network-admin, network-operator roles
 
 ### Module 1: 201-Multi-Vendor-Network-VXLAN Topology Diagram 
-image::201_vxlan_topology.png[Network Topology,align="center",link=self,window=blank,width=700,title="Workshop Network Topology"]
+image::201_vxlan_topology.png[Network Topology,align="center",link=self,window=blank,title="Workshop Network Topology"]
 
 
 ### Module 2: 201-Multi-Vendor-Network-Topology Diagram Network Security
 (Future)
 
-image::topology_security.png[Network Topology,align="center",link=self,window=blank,width=700,title="Workshop Security Topology"]
+image::topology_security.png[Network Topology,align="center",link=self,window=blank,title="Workshop Security Topology"]

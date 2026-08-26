@@ -47,7 +47,7 @@ Click *Save workflow job template*.
 +
 . Review the Workflow nodes from the visualizer.
 +
-image::visualizer.png[compliance,align="center",link=self,window=blank,width=600]
+image::visualizer.png[compliance,align="center",link=self,window=blank]
 +
 **Nodes:**
 +
@@ -57,15 +57,15 @@ image::visualizer.png[compliance,align="center",link=self,window=blank,width=600
 +
 . Review how the Nodes are connected together `(always, success, failure, etc.)`:
 +
-image::workflow_nodes.png[compliance,align="center",link=self,window=blank,width=800]
+image::workflow_nodes.png[compliance,align="center",link=self,window=blank]
 +
 . Exit the visualizer
 +
-image:exit_visualizer.png[compliance,align="center",link=self,window=blank,width=800]
+image:exit_visualizer.png[compliance,align="center",link=self,window=blank]
 +
 . Select *Survey* and click *Create survey question*
 +
-image:create_survey.png[compliance,align="center",link=self,window=blank,width=800]
+image:create_survey.png[compliance,align="center",link=self,window=blank]
 +
 . Configure the survey question
 +
@@ -78,13 +78,13 @@ image:create_survey.png[compliance,align="center",link=self,window=blank,width=8
 * variable = *tag*
 * *Enable survey*
 +
-image:question_config.png[compliance,align="center",link=self,window=blank,width=800]
+image:question_config.png[compliance,align="center",link=self,window=blank]
 +
 TIP: In multiple choice multiple select, hit enter to bring up the next choice box.
 +
 click enable survey question
 +
-image:survey_config.png[compliance,align="center",link=self,window=blank,width=800]
+image:survey_config.png[compliance,align="center",link=self,window=blank]
 +
 WARNING: Don't forget to enable the survey!
 
@@ -96,21 +96,21 @@ NOTE: This workflow will pause at the approval node `Human Approval`. The check 
 +
 Select *logging* and *ntp* when prompted by the survey.
 +
-image::workflow_paused.png[compliance,align="center",link=self,window=blank,width=800]
+image::workflow_paused.png[compliance,align="center",link=self,window=blank]
 +
 . While the approval node is paused, review the job output for `Compliance Check` node.
 +
-image::workflow_check.png[compliance,align="center",link=self,window=blank,width=800]
+image::workflow_check.png[compliance,align="center",link=self,window=blank]
 +
 . Scroll down to click *leaf3* - TASK [roles/logging : Check/Apply NXOS logging configuration]
 +
-image::leaf3_logging.png[compliance,align="center",link=self,window=blank,width=800]
+image::leaf3_logging.png[compliance,align="center",link=self,window=blank]
 
 == Step 3: Review the Resource Module Output
 
 .  Click on *Data* to review the module output
 +
-image::leaf3_data.png[compliance,align="center",link=self,window=blank,width=800]
+image::leaf3_data.png[compliance,align="center",link=self,window=blank]
 +
 NOTE: **Level Set -- Understanding the logging_global Resource Module Output** +
 `logging_global` is a network resource module -- a category of Ansible modules designed to manage one specific section of a device's configuration declaratively. Instead of sending raw CLI commands, you define the desired logging configuration in structured YAML, and the module handles the translation to vendor-specific commands. +
@@ -228,7 +228,7 @@ Check mode can be enabled at multiple levels. In the **Ansible Automation Contro
  +
 At the **playbook level**, you can also set `check_mode: true` on an individual task or on an entire play. This is useful when you want _some_ tasks to always run in check mode regardless of how the job is launched -- for example, an audit task that should never make changes. When check mode is enabled at the job template level in AAP, it overrides the playbook setting and forces _all_ tasks into check mode for that run.
  
-image::checkmode.png[compliance,align="center",link=self,window=blank,width=800]
+image::checkmode.png[compliance,align="center",link=self,window=blank]
  
 [start=3]
 . Validate that check mode didn't make changes to leaf3
@@ -249,7 +249,7 @@ leaf3#
 
 TIP: If the Containerlab Terminal is stuck, refresh the tab.
 
-image::refresh.png[refresh,align="center",link=self,window=blank,width=800]
+image::refresh.png[refresh,align="center",link=self,window=blank]
 
 [start=4]
 . Return to the automation controller *1-3-Network_Compliance-Check* job output and examine the DIFF output for leaf3
@@ -349,16 +349,16 @@ The output shows exactly which logging settings were added, removed, or changed 
 +
 *Jobs*
 
-image::workflow_paused.png[compliance,align="center",link=self,window=blank,width=800]
+image::workflow_paused.png[compliance,align="center",link=self,window=blank]
 
 [start=2]
 . Click *Approve* | *Confirm* | *Workflow Approvals*
 
-image::click_approval.png[compliance,align="center",link=self,window=blank,width=800]
+image::click_approval.png[compliance,align="center",link=self,window=blank]
 
 == Step 6: Review the Job Output for `1-3-Network_Compliance-Run`
 
-image::leaf3_run.png[compliance,align="center",link=self,window=blank,width=800]
+image::leaf3_run.png[compliance,align="center",link=self,window=blank]
 
 === Understanding the Run Mode Output
 

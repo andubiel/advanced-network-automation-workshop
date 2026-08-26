@@ -27,7 +27,7 @@ WARNING: Sometimes devices fail during setup!
 
 . Access the *Containerlab* tab
 +
-image::containerlab_tab.png[Tab,align="center",link=self,window=_blank,width=800]
+image::containerlab_tab.png[Tab,align="center",link=self,window=_blank]
 +
 . Run the following command to ensure all six network switches are running:
 
@@ -122,17 +122,17 @@ Use Visual Studio Code to complete the workshop exercises. VS Code provides:
 
 Click the **VS Code** tab at the top of the Showroom window. The editor opens directly with no login required.
 
-image::launch_page.png[VS Code tab,align="center",link=self,window=_blank,width=600]
+image::launch_page.png[VS Code tab,align="center",link=self,window=_blank]
 
 TIP: Open VS Code in its own browser tab by clicking on VS Code's *File* and *New Window*.
 
 In the VS Code file browser, open the `201-multi-vendor-vxlan-workshop/` directory:
 
-image::vscode-networkworkshop.png[File browser,align="center",link=self,window=_blank,width=600]
+image::vscode-networkworkshop.png[File browser,align="center",link=self,window=_blank]
 
 Click `inventory.yml` to view its contents. This YAML inventory file could be used to source an inventory from a project. Review the YAML file to understand how the parent and child groups were constructed for the network devices. You'll explore additional inventory options in subsequent steps.
 
-image::inventory.png[Playbook,align="center",link=self,window=_blank,width=800]
+image::inventory.png[Playbook,align="center",link=self,window=_blank]
 
 == Step 2: Using the Terminal
 
@@ -140,7 +140,7 @@ Open a terminal in Visual Studio Code `...` by clicking **Terminal** → **New T
 
 TIP: If the screen has been adjusted or minimized, you might notice three dots ... instead of Terminal. Click the three dots and then *New Terminal*.
 
-image::vscode-new-terminal.png[New terminal,align="center",link=self,window=_blank,width=600]
+image::vscode-new-terminal.png[New terminal,align="center",link=self,window=_blank]
 
 The terminal opens in the `201-multi-vendor-vxlan-workshop/` directory. Verify your location with:
 
@@ -263,39 +263,39 @@ Understanding how inventory appears in the Automation Controller GUI is essentia
 
 . Access the automation controller tab
 +
-image::automation-controller-tab.png[Tab,align="center",link=self,window=_blank,width=600]
+image::automation-controller-tab.png[Tab,align="center",link=self,window=_blank]
 +
 username: *admin* +
 password: *ansible123!*
 +
-image::controller_login.png[AAP,align="center",link=self,window=_blank,width=400]
+image::controller_login.png[AAP,align="center",link=self,window=_blank]
 +
 . Navigate to *Automation Execution* | *Infrastructure* | *Inventories* | *Workshop Inventory*
 +
-image::select_inventories_workshop_inventory.png[Inventories,align="center",link=self,window=_blank,width=900]
+image::select_inventories_workshop_inventory.png[Inventories,align="center",link=self,window=_blank]
 +
 . Explore the groups, hosts, and associated groups for the `Workshop Inventory`.
 +
-image::workshop_inventory.png[Workshop,align="center",link=self,window=_blank,width=800]
+image::workshop_inventory.png[Workshop,align="center",link=self,window=_blank]
 +
 . In this example, navigate to group *cisco* | *related groups* | *cisco_leafs*
 +
-image::related_groups.png[Groups,align="center",link=self,window=_blank,width=800]
+image::related_groups.png[Groups,align="center",link=self,window=_blank]
 +
 . See the `cisco_leafs` group_vars below:
 +
-image::cisco_leaf_group_vars.png[Leaf,align="center",link=self,window=_blank,width=800]
+image::cisco_leaf_group_vars.png[Leaf,align="center",link=self,window=_blank]
 +
 . Navigate to *Inventories* | *Workshop Inventory* | *Hosts* | *leaf1*. Notice the host_vars for leaf1:
 +
-image::leaf1_host.png[Host,align="center",link=self,window=_blank,width=800]
+image::leaf1_host.png[Host,align="center",link=self,window=_blank]
 
 
 == Step 5: Open NetBox
 
 . Navigate to the *NetBox* tab
 +
-image::netbox_tab.png[Netbox,align="center",link=self,window=_blank,width=800]
+image::netbox_tab.png[Netbox,align="center",link=self,window=_blank]
 +
 username: *admin* +
 password: *admin@123*
@@ -315,12 +315,12 @@ An API token is required for Ansible to authenticate with NetBox programmaticall
 
 . Navigate to *Admin* | *API Tokens* | *Add a Token* | *Create*
 +
-image::add_new_token.png[Token,align="center",link=self,window=_blank,width=800]
+image::add_new_token.png[Token,align="center",link=self,window=_blank]
 
 
 == Step 7: Copy API Token
 
-image::copy_new_token.png[Copy,align="center",link=self,window=_blank,width=800]
+image::copy_new_token.png[Copy,align="center",link=self,window=_blank]
 
 **Important:** Copy the API token to VS Code or a local notepad for later usage.
 
@@ -334,7 +334,7 @@ Storing the API token in an AAP credential keeps it out of playbooks and version
 username: *admin* +
 password: *ansible123!*
 +
-image::netbox_credential.png[Credential,align="center",link=self,window=_blank,width=800]
+image::netbox_credential.png[Credential,align="center",link=self,window=_blank]
 +
 . Navigate to *Automation Execution* | *Infrastructure* | *Credentials* | *Netbox Credential* and edit - update the credential
 . Paste in your Netbox Host and API Key.
@@ -366,7 +366,7 @@ user: *admin*
 +
 password: *admin@123*
 +
-image::launch_setup_netbox.png[Launch,align="center",link=self,window=_blank,width=800]
+image::launch_setup_netbox.png[Launch,align="center",link=self,window=_blank]
 
 == Step 10: Validate NetBox Configuration
 
@@ -380,7 +380,7 @@ password: *admin@123*
 . Navigate to *Devices*
 . Click into a specific network device to examine the Netbox configurations
 +
-image::netbox_devices.png[Devices,align="center",link=self,window=_blank,width=800]
+image::netbox_devices.png[Devices,align="center",link=self,window=_blank]
 
 == Step 11: Sync the NetBox Inventory from the Automation Controller 
 Return to the Ansible Automation Platform tab
@@ -404,17 +404,17 @@ Syncing pulls the latest device data from NetBox into the Automation Controller'
 * **Execution Environment** -- the container image used to run the sync
 --
 +
-image::inventory_source.png[Source,align="center",link=self,window=_blank,width=800]
+image::inventory_source.png[Source,align="center",link=self,window=_blank]
 +
 At this point there should be groups and hosts available.
 +
 **Groups**
 +
-image::netbox_groups.png[Groups,align="center",link=self,window=_blank,width=800]
+image::netbox_groups.png[Groups,align="center",link=self,window=_blank]
 +
 **Hosts**
 +
-image::netbox_hosts.png[Hosts,align="center",link=self,window=_blank,width=800]
+image::netbox_hosts.png[Hosts,align="center",link=self,window=_blank]
 +
 . Take a look at the `netbox_inventory.yml` file from the *VSCode* tab. The credentials needed to log into Netbox are read in automatically as environment variables from the `Netbox Credential`.
 +

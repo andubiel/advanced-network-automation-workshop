@@ -119,12 +119,12 @@ password: *ansible123!*
 
 Make sure every node succeeds
 
-image:underlay_workflow.png[Workflow,align="center",link=self,window=blank,width=600]
+image:underlay_workflow.png[Workflow,align="center",link=self,window=blank]
 
 
 == Step 2: Review the job output for the `1-5-Underlay_Configs-Deploy` job template to understand a template-driven task
 
-image:workflow_underlay_deploy.png[Deploy,align="center",link=self,window=blank,width=600]
+image:workflow_underlay_deploy.png[Deploy,align="center",link=self,window=blank]
 
 1. In the job output - Click on `TASK [underlay_fabric : Configure BGP]` for *spine1*
 +
@@ -175,7 +175,7 @@ This is a standard `eos_config` warning. It is telling you that if you run this 
 
 Reviewing the test output teaches you to read the validation results that confirm the underlay is healthy. In production, these same tests can run as scheduled jobs to continuously verify that OSPF adjacencies, BGP sessions, and loopback reachability remain intact -- catching silent underlay failures before they disrupt overlay traffic.
 
-image:workflow_underlay_test.png[Test,align="center",link=self,window=blank,width=600]
+image:workflow_underlay_test.png[Test,align="center",link=self,window=blank]
 
 == Recommended -- Deep Explanation of the Test Output
 

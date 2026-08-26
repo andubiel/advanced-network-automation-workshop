@@ -39,7 +39,7 @@ password: *ansible123!*
 +
 . The survey will prompt for naming your branch. For this exercise, when prompted, name your backup branch *initial_config* and continue to run by clicking finished.
 +
-image::initial_config.png[Initial,align="center",link=self,window=_blank,width=800]
+image::initial_config.png[Initial,align="center",link=self,window=_blank]
 +
 . Observe the job output for a successful backup.
 
@@ -53,7 +53,7 @@ Verifying that backup files landed in the correct Git branch and directory struc
 user: *gitea* +
 password: *gitea123*
 +
-image::gitea.png[Gitea,align="center",link=self,window=_blank,width=800]
+image::gitea.png[Gitea,align="center",link=self,window=_blank]
 +
 . Navigate to *repository* | *gitea/201-multi-vendor-vxlan-workshop* | *branches*
 +
@@ -61,13 +61,13 @@ WARNING: Don't use the *main* branch because it does not include your backups!
 +
 . Select your `initial_config` branch
 +
-image::gitiea-backups.png[Backups,align="center",link=self,window=_blank,width=800]
+image::gitiea-backups.png[Backups,align="center",link=self,window=_blank]
 +
 . Navigate to the backup files located in `201_network_backup_files/`
 +
 NOTE: Your timestamp will be unique.
 
-image::gitea_leaf3.png[Leaf3,align="center",link=self,window=_blank,width=800]
+image::gitea_leaf3.png[Leaf3,align="center",link=self,window=_blank]
 
 
 == Step 3: Understand the `backups.yml` playbook
