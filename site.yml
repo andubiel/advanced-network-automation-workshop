@@ -1,7 +1,7 @@
 ---
 site:
   title: "Ansible Network Automation Workshop"
-  url: https://andubiel.github.io/zt-201-network-automation-workshop/
+  url: https://rhpds.github.io/advanced-network-automation-workshop/
   start_page: modules::index.adoc
 
 asciidoc:
