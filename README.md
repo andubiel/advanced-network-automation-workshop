@@ -3,7 +3,7 @@
 This immersive, hands-on workshop highlights the power and capabilities of AAP in automating real-world network scenarios. As a continuation of the Introduction to Ansible Network workshop, this session introduces advanced concepts, including Source of Truth (SoT), dynamic inventories, compliance, configuration drift, and state validation. Rather than focusing on extensive playbook development from scratch, participants will explore the "art of the possible" by building workflows to deploy and validate a multi-vendor EVPN VXLAN switching fabric.
 
 **Owner:** andubiel
-**Migrated from:** https://github.com/andubiel/zt-201-network-automation-workshop.git
+**Migrated from:** https://github.com/rhpds/advanced-network-automation-workshop/
 
 ---
 

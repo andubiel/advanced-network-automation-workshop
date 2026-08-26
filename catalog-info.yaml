@@ -15,7 +15,7 @@ metadata:
     ph.rhdp.io/deployment-mode: rhdp_published
     ph.rhdp.io/github-user: andubiel
     ph.rhdp.io/owner: tdubiel@redhat.com
-    ph.rhdp.io/migrated-repo: https://github.com/andubiel/zt-201-network-automation-workshop.git
+    ph.rhdp.io/migrated-repo: https://github.com/rhpds/advanced-network-automation-workshop/
     backstage.io/techdocs-ref: dir:.
     github.com/project-slug: rhpds/advanced-network-automation-workshop
     ph.rhdp.io/created-at: 2026-08-20 02:47:21.186000+00:00
