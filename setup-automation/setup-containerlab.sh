@@ -4,8 +4,8 @@
 echo "Setup containerlab" >> /tmp/progress.log
 chmod 666 /tmp/progress.log 2>/dev/null || true
 
-REPO_URL="https://github.com/andubiel/zt-201-network-automation-workshop.git"
-REPO_DIR="/home/rhel/zt-201-network-automation-workshop"
+REPO_URL="https://github.com/rhpds/advanced-network-automation-workshop.git"
+REPO_DIR="/home/rhel/advanced-network-automation-workshop"
 
 # ---------------------------------------------------------------------------
 # Destroy any existing containerlab topology to ensure clean state
@@ -362,7 +362,7 @@ install_netbox_resume_service() {
 
   cat > /usr/local/bin/netbox-resume <<'RESUME'
 #!/bin/bash
-NETBOX_DIR="/home/rhel/zt-201-network-automation-workshop/netbox-docker"
+NETBOX_DIR="/home/rhel/advanced-network-automation-workshop/netbox-docker"
 
 if [[ ! -d "$NETBOX_DIR" ]]; then
   echo "netbox-resume: NetBox directory $NETBOX_DIR not found, skipping"
