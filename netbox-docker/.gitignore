@@ -1,0 +1,18 @@
+*.sql.gz
+.netbox
+.python-version
+*.pem
+configuration/*
+!configuration/configuration.py
+!configuration/extra.py
+configuration/ldap/*
+!configuration/ldap/extra.py
+!configuration/ldap/ldap_config.py
+!configuration/logging.py
+!configuration/plugins.py
+super-linter.log
+
+# Ignore actual env files (secrets)
+env/*.env
+# But keep the templates
+!env/*.env.template
