@@ -1,0 +1,1275 @@
+---
+# Provisions the full network workshop inside Automation controller:
+#   Workshop Inventory (rtr1-4, ansible-1, backup-server), groups, credential,
+#   toolkit project + job templates, organizations, teams, users, RBAC.
+#
+# Included from aap_bootstrap.yml after the base project is created.
+# All controller_* auth vars come from group_vars/all.yml.
+
+# ── Organizations (must exist before objects that reference them) ────────────
+- name: "Organization — Red Hat network organization"
+  ansible.controller.organization:
+    name: "Red Hat network organization"
+    description: "Red Hat Network Organization"
+    state: present
+    controller_host: "{{ controller_endpoint.rstrip('/') }}"
+    controller_username: "{{ controller_username }}"
+    controller_password: "{{ controller_password }}"
+    validate_certs: "{{ controller_verify_ssl | default(false) }}"
+
+- name: "Organization — Red Hat compute organization"
+  ansible.controller.organization:
+    name: "Red Hat compute organization"
+    description: "Red Hat Compute Organization"
+    state: present
+    controller_host: "{{ controller_endpoint.rstrip('/') }}"
+    controller_username: "{{ controller_username }}"
+    controller_password: "{{ controller_password }}"
+    validate_certs: "{{ controller_verify_ssl | default(false) }}"
+
+# ── Credential Types ────────────────────────────────────────────────────────
+- name: "Credential Type — Gitea Type"
+  ansible.controller.credential_type:
+    name: "Gitea Type"
+    description: ""
+    kind: "cloud"
+    inputs:
+      fields:
+        - id: username
+          type: string
+          label: Gitea Username
+        - id: password
+          type: string
+          label: Gitea Password
+          secret: true
+        - id: token
+          type: string
+          label: Gitea API Token
+          secret: true
+        - id: email
+          type: string
+          label: Gitea Email
+      required:
+        - username
+        - password
+        - token
+        - email
+    injectors:
+      extra_vars:
+        email: !unsafe '{{ email }}'
+        token: !unsafe '{{ token }}'
+        password: !unsafe '{{ password }}'
+        username: !unsafe '{{ username }}'
+    state: present
+    controller_host: "{{ controller_endpoint.rstrip('/') }}"
+    controller_username: "{{ controller_username }}"
+    controller_password: "{{ controller_password }}"
+    validate_certs: "{{ controller_verify_ssl | default(false) }}"
+
+- name: "Credential Type — netbox-source"
+  ansible.controller.credential_type:
+    name: "netbox-source"
+    description: ""
+    kind: "cloud"
+    inputs:
+      fields:
+        - id: NETBOX_API
+          type: string
+          label: NetBox Host URL
+        - id: NETBOX_API_KEY
+          type: string
+          label: NetBox API Token
+          secret: true
+      required:
+        - NETBOX_API
+        - NETBOX_API_KEY
+    injectors:
+      env:
+        NETBOX_API: !unsafe '{{ NETBOX_API }}'
+        NETBOX_API_KEY: !unsafe '{{ NETBOX_API_KEY }}'
+    state: present
+    controller_host: "{{ controller_endpoint.rstrip('/') }}"
+    controller_username: "{{ controller_username }}"
+    controller_password: "{{ controller_password }}"
+    validate_certs: "{{ controller_verify_ssl | default(false) }}"
+
+# ── Workshop Credential (Machine) ───────────────────────────────────────────
+- name: Workshop Credential — SSH to routers and hosts
+  ansible.controller.credential:
+    name: "Workshop Credential"
+    organization: "Red Hat network organization"
+    credential_type: Machine
+    inputs:
+      username: "{{ containerlab_ansible_user }}"
+      password: "{{ workshop_admin_password }}"
+      ssh_key_data: "{{ ssh_private_key_content | default(omit) }}"
+    state: present
+    controller_host: "{{ controller_endpoint.rstrip('/') }}"
+    controller_username: "{{ controller_username }}"
+    controller_password: "{{ controller_password }}"
+    validate_certs: "{{ controller_verify_ssl | default(false) }}"
+
+- name: Build external AAP hostname from GUID/DOMAIN
+  ansible.builtin.set_fact:
+    controller_external_host: >-
+      {{ 'https://control-' + lookup('ansible.builtin.env', 'GUID') + '.' + lookup('ansible.builtin.env', 'DOMAIN')
+         if lookup('ansible.builtin.env', 'GUID') | length > 0 and lookup('ansible.builtin.env', 'DOMAIN') | length > 0
+         else controller_endpoint }}
+
+- name: Log Controller Credential host
+  ansible.builtin.debug:
+    msg: "Controller Credential host will be: {{ controller_external_host }}"
+
+- name: Controller Credential — AAP API access for backup/restore jobs
+  ansible.controller.credential:
+    name: "Controller Credential"
+    organization: Default
+    credential_type: "Red Hat Ansible Automation Platform"
+    inputs:
+      host: "{{ controller_external_host }}"
+      username: "{{ controller_username }}"
+      password: "{{ controller_password }}"
+      verify_ssl: false
+    state: present
+    controller_host: "{{ controller_endpoint.rstrip('/') }}"
+    controller_username: "{{ controller_username }}"
+    controller_password: "{{ controller_password }}"
+    validate_certs: "{{ controller_verify_ssl | default(false) }}"
+
+- name: Netbox Credential — Netbox API access
+  ansible.controller.credential:
+    name: "Netbox Credential"
+    description: ""
+    organization: "Red Hat network organization"
+    credential_type: "netbox-source"
+    inputs:
+      NETBOX_API: "http://containerlab:8282"
+      NETBOX_API_KEY: ""
+    state: present
+    controller_host: "{{ controller_endpoint.rstrip('/') }}"
+    controller_username: "{{ controller_username }}"
+    controller_password: "{{ controller_password }}"
+    validate_certs: "{{ controller_verify_ssl | default(false) }}"
+
+- name: Containerlab_Network Credential — Containerlab network device access
+  ansible.controller.credential:
+    name: "Containerlab_Network Credential"
+    description: ""
+    organization: "Red Hat network organization"
+    credential_type: "Machine"
+    inputs:
+      username: admin
+      password: admin@123  # notsecret
+    state: present
+    controller_host: "{{ controller_endpoint.rstrip('/') }}"
+    controller_username: "{{ controller_username }}"
+    controller_password: "{{ controller_password }}"
+    validate_certs: "{{ controller_verify_ssl | default(false) }}"
+
+- name: Gitea Credential — Gitea Git repository access
+  ansible.controller.credential:
+    name: "Gitea Credential"
+    description: ""
+    organization: "Red Hat network organization"
+    credential_type: "Gitea Type"
+    inputs:
+      username: gitea
+      password: gitea123  # notsecret
+      token: gitea123  # notsecret
+      email: gitea@example.com
+    state: present
+    controller_host: "{{ controller_endpoint.rstrip('/') }}"
+    controller_username: "{{ controller_username }}"
+    controller_password: "{{ controller_password }}"
+    validate_certs: "{{ controller_verify_ssl | default(false) }}"
+
+# ── Workshop Inventory ──────────────────────────────────────────────────────
+- name: Workshop Inventory
+  ansible.controller.inventory:
+    name: "Workshop Inventory"
+    organization: "Red Hat network organization"
+    state: present
+    controller_host: "{{ controller_endpoint.rstrip('/') }}"
+    controller_username: "{{ controller_username }}"
+    controller_password: "{{ controller_password }}"
+    validate_certs: "{{ controller_verify_ssl | default(false) }}"
+
+# Groups
+- name: "Group — arista_leafs"
+  ansible.controller.group:
+    name: arista_leafs
+    inventory: "Workshop Inventory"
+    variables:
+      ansible_host: containerlab
+      ansible_network_os: arista.eos.eos
+      ansible_connection: ansible.netcommon.network_cli
+      ansible_become: 'true'
+      ansible_become_method: enable
+    state: present
+    controller_host: "{{ controller_endpoint.rstrip('/') }}"
+    controller_username: "{{ controller_username }}"
+    controller_password: "{{ controller_password }}"
+    validate_certs: "{{ controller_verify_ssl | default(false) }}"
+
+- name: "Group — cisco_leafs"
+  ansible.controller.group:
+    name: cisco_leafs
+    inventory: "Workshop Inventory"
+    variables:
+      ansible_host: containerlab
+      ansible_network_os: cisco.nxos.nxos
+      ansible_connection: ansible.netcommon.network_cli
+    state: present
+    controller_host: "{{ controller_endpoint.rstrip('/') }}"
+    controller_username: "{{ controller_username }}"
+    controller_password: "{{ controller_password }}"
+    validate_certs: "{{ controller_verify_ssl | default(false) }}"
+
+- name: "Group — spines"
+  ansible.controller.group:
+    name: spines
+    inventory: "Workshop Inventory"
+    variables:
+      ansible_host: containerlab
+      ansible_network_os: arista.eos.eos
+      ansible_connection: ansible.netcommon.network_cli
+      ansible_become: 'true'
+      ansible_become_method: enable
+    state: present
+    controller_host: "{{ controller_endpoint.rstrip('/') }}"
+    controller_username: "{{ controller_username }}"
+    controller_password: "{{ controller_password }}"
+    validate_certs: "{{ controller_verify_ssl | default(false) }}"
+
+- name: "Group — leafs (parent of arista_leafs, cisco_leafs)"
+  ansible.controller.group:
+    name: leafs
+    inventory: "Workshop Inventory"
+    children:
+      - arista_leafs
+      - cisco_leafs
+    state: present
+    controller_host: "{{ controller_endpoint.rstrip('/') }}"
+    controller_username: "{{ controller_username }}"
+    controller_password: "{{ controller_password }}"
+    validate_certs: "{{ controller_verify_ssl | default(false) }}"
+
+- name: "Group — arista (parent of spines, arista_leafs)"
+  ansible.controller.group:
+    name: arista
+    inventory: "Workshop Inventory"
+    children:
+      - spines
+      - arista_leafs
+    state: present
+    controller_host: "{{ controller_endpoint.rstrip('/') }}"
+    controller_username: "{{ controller_username }}"
+    controller_password: "{{ controller_password }}"
+    validate_certs: "{{ controller_verify_ssl | default(false) }}"
+
+- name: "Group — cisco (parent of cisco_leafs)"
+  ansible.controller.group:
+    name: cisco
+    inventory: "Workshop Inventory"
+    children:
+      - cisco_leafs
+    state: present
+    controller_host: "{{ controller_endpoint.rstrip('/') }}"
+    controller_username: "{{ controller_username }}"
+    controller_password: "{{ controller_password }}"
+    validate_certs: "{{ controller_verify_ssl | default(false) }}"
+
+# Switch hosts — accessed from AAP/control via containerlab port forwarding
+- name: "Host — leaf1 (Arista EOS)"
+  ansible.controller.host:
+    name: leaf1
+    inventory: "Workshop Inventory"
+    variables:
+      ansible_port: 2222
+    state: present
+    controller_host: "{{ controller_endpoint.rstrip('/') }}"
+    controller_username: "{{ controller_username }}"
+    controller_password: "{{ controller_password }}"
+    validate_certs: "{{ controller_verify_ssl | default(false) }}"
+
+- name: "Host — leaf2 (Arista EOS)"
+  ansible.controller.host:
+    name: leaf2
+    inventory: "Workshop Inventory"
+    variables:
+      ansible_port: 2223
+    state: present
+    controller_host: "{{ controller_endpoint.rstrip('/') }}"
+    controller_username: "{{ controller_username }}"
+    controller_password: "{{ controller_password }}"
+    validate_certs: "{{ controller_verify_ssl | default(false) }}"
+
+- name: "Host — leaf3 (Cisco NX-OS)"
+  ansible.controller.host:
+    name: leaf3
+    inventory: "Workshop Inventory"
+    variables:
+      ansible_port: 2224
+    state: present
+    controller_host: "{{ controller_endpoint.rstrip('/') }}"
+    controller_username: "{{ controller_username }}"
+    controller_password: "{{ controller_password }}"
+    validate_certs: "{{ controller_verify_ssl | default(false) }}"
+
+- name: "Host — leaf4 (Cisco NX-OS)"
+  ansible.controller.host:
+    name: leaf4
+    inventory: "Workshop Inventory"
+    variables:
+      ansible_port: 2225
+    state: present
+    controller_host: "{{ controller_endpoint.rstrip('/') }}"
+    controller_username: "{{ controller_username }}"
+    controller_password: "{{ controller_password }}"
+    validate_certs: "{{ controller_verify_ssl | default(false) }}"
+
+- name: "Host — spine1 (Arista EOS)"
+  ansible.controller.host:
+    name: spine1
+    inventory: "Workshop Inventory"
+    variables:
+      ansible_port: 2226
+    state: present
+    controller_host: "{{ controller_endpoint.rstrip('/') }}"
+    controller_username: "{{ controller_username }}"
+    controller_password: "{{ controller_password }}"
+    validate_certs: "{{ controller_verify_ssl | default(false) }}"
+
+- name: "Host — spine2 (Arista EOS)"
+  ansible.controller.host:
+    name: spine2
+    inventory: "Workshop Inventory"
+    variables:
+      ansible_port: 2227
+    state: present
+    controller_host: "{{ controller_endpoint.rstrip('/') }}"
+    controller_username: "{{ controller_username }}"
+    controller_password: "{{ controller_password }}"
+    validate_certs: "{{ controller_verify_ssl | default(false) }}"
+
+- name: "Host — ansible-1 (containerlab VM — reachable from EE)"
+  ansible.controller.host:
+    name: ansible-1
+    inventory: "Workshop Inventory"
+    variables:
+      ansible_host: containerlab
+      ansible_connection: ssh
+      ansible_user: rhel
+      ansible_ssh_common_args: "-o StrictHostKeyChecking=no"
+    state: present
+    controller_host: "{{ controller_endpoint.rstrip('/') }}"
+    controller_username: "{{ controller_username }}"
+    controller_password: "{{ controller_password }}"
+    validate_certs: "{{ controller_verify_ssl | default(false) }}"
+
+- name: "Host — backup-server (containerlab VM — reachable from EE)"
+  ansible.controller.host:
+    name: backup-server
+    description: "this server is where we backup network configuration"
+    inventory: "Workshop Inventory"
+    variables:
+      ansible_host: containerlab
+      ansible_connection: ssh
+      ansible_user: rhel
+      ansible_ssh_common_args: "-o StrictHostKeyChecking=no"
+    state: present
+    controller_host: "{{ controller_endpoint.rstrip('/') }}"
+    controller_username: "{{ controller_username }}"
+    controller_password: "{{ controller_password }}"
+    validate_certs: "{{ controller_verify_ssl | default(false) }}"
+
+# Associate hosts with groups
+- name: "Associate leaf1, leaf2 with arista_leafs group"
+  ansible.controller.group:
+    name: arista_leafs
+    inventory: "Workshop Inventory"
+    hosts:
+      - leaf1
+      - leaf2
+    preserve_existing_hosts: true
+    state: present
+    controller_host: "{{ controller_endpoint.rstrip('/') }}"
+    controller_username: "{{ controller_username }}"
+    controller_password: "{{ controller_password }}"
+    validate_certs: "{{ controller_verify_ssl | default(false) }}"
+
+- name: "Associate leaf3, leaf4 with cisco_leafs group"
+  ansible.controller.group:
+    name: cisco_leafs
+    inventory: "Workshop Inventory"
+    hosts:
+      - leaf3
+      - leaf4
+    preserve_existing_hosts: true
+    state: present
+    controller_host: "{{ controller_endpoint.rstrip('/') }}"
+    controller_username: "{{ controller_username }}"
+    controller_password: "{{ controller_password }}"
+    validate_certs: "{{ controller_verify_ssl | default(false) }}"
+
+- name: "Associate spine1, spine2 with spines group"
+  ansible.controller.group:
+    name: spines
+    inventory: "Workshop Inventory"
+    hosts:
+      - spine1
+      - spine2
+    preserve_existing_hosts: true
+    state: present
+    controller_host: "{{ controller_endpoint.rstrip('/') }}"
+    controller_username: "{{ controller_username }}"
+    controller_password: "{{ controller_password }}"
+    validate_certs: "{{ controller_verify_ssl | default(false) }}"
+
+# ── Execution Environment ──────────────────────────────────────────────────
+- name: "Execution Environment — Network EE"
+  ansible.controller.execution_environment:
+    name: "Network EE"
+    image: "quay.io/acme_corp/network-ee"
+    pull: missing
+    organization: "Red Hat network organization"
+    state: present
+    controller_host: "{{ controller_endpoint.rstrip('/') }}"
+    controller_username: "{{ controller_username }}"
+    controller_password: "{{ controller_password }}"
+    validate_certs: "{{ controller_verify_ssl | default(false) }}"
+
+- name: "Execution Environment — Netbox EE"
+  ansible.controller.execution_environment:
+    name: "Netbox EE"
+    image: "quay.io/acme_corp/network-netbox-eda-ee:latest"
+    pull: missing
+    organization: "Red Hat network organization"
+    state: present
+    controller_host: "{{ controller_endpoint.rstrip('/') }}"
+    controller_username: "{{ controller_username }}"
+    controller_password: "{{ controller_password }}"
+    validate_certs: "{{ controller_verify_ssl | default(false) }}"
+
+# ── Workshop Project ─────────────────────────────────────────────────────────
+- name: "Project — Workshop Project (network-automation/toolkit)"
+  ansible.controller.project:
+    name: "Workshop Project"
+    organization: "Red Hat network organization"
+    scm_type: git
+    scm_url: "https://gitea-{{ lookup('ansible.builtin.env', 'GUID') }}.{{ lookup('ansible.builtin.env', 'DOMAIN') }}/gitea/201-multi-vendor-vxlan-workshop.git"
+    scm_update_on_launch: true
+    state: present
+    controller_host: "{{ controller_endpoint.rstrip('/') }}"
+    controller_username: "{{ controller_username }}"
+    controller_password: "{{ controller_password }}"
+    validate_certs: "{{ controller_verify_ssl | default(false) }}"
+
+- name: "Sync Workshop Project"
+  ansible.controller.project_update:
+    project: "Workshop Project"
+    wait: true
+    timeout: 6001
+    controller_host: "{{ controller_endpoint.rstrip('/') }}"
+    controller_username: "{{ controller_username }}"
+    controller_password: "{{ controller_password }}"
+    validate_certs: "{{ controller_verify_ssl | default(false) }}"
+  failed_when: false
+
+# ── Netbox Inventory ────────────────────────────────────────────────────────
+- name: Netbox Inventory
+  ansible.controller.inventory:
+    name: "Netbox Inventory"
+    description: ""
+    organization: "Red Hat network organization"
+    prevent_instance_group_fallback: false
+    state: present
+    controller_host: "{{ controller_endpoint.rstrip('/') }}"
+    controller_username: "{{ controller_username }}"
+    controller_password: "{{ controller_password }}"
+    validate_certs: "{{ controller_verify_ssl | default(false) }}"
+
+- name: Netbox Inventory Source
+  ansible.controller.inventory_source:
+    name: "netbox-source"
+    description: ""
+    organization: "Red Hat network organization"
+    inventory: "Netbox Inventory"
+    source: scm
+    source_project: "Workshop Project"
+    source_path: "netbox_inventory.yml"
+    credential: "Netbox Credential"
+    execution_environment: "Netbox EE"
+    update_on_launch: true
+    overwrite: true
+    overwrite_vars: true
+    state: present
+    controller_host: "{{ controller_endpoint.rstrip('/') }}"
+    controller_username: "{{ controller_username }}"
+    controller_password: "{{ controller_password }}"
+    validate_certs: "{{ controller_verify_ssl | default(false) }}"
+
+# ── Job Templates ────────────────────────────────────────────────────────────
+
+# ── Additional Workshop Job Templates ────────────────────────────────────────
+- name: "Job template — 1-Dynamic_inventory-Netbox-Setup"
+  ansible.controller.job_template:
+    name: "1-1-Dynamic_inventory-Netbox-Setup"
+    job_type: run
+    organization: "Red Hat network organization"
+    project: "Workshop Project"
+    playbook: "1-1-dynamic_inventory/netbox_setup.yml"
+    inventory: "Workshop Inventory"
+    execution_environment: "Netbox EE"
+    credentials:
+      - "Netbox Credential"
+    state: present
+    controller_host: "{{ controller_endpoint.rstrip('/') }}"
+    controller_username: "{{ controller_username }}"
+    controller_password: "{{ controller_password }}"
+    validate_certs: "{{ controller_verify_ssl | default(false) }}"
+
+- name: "Job template — 1-Dynamic_Inventory-Netbox-Facts"
+  ansible.controller.job_template:
+    name: "1-1-Dynamic_Inventory-Netbox-Facts"
+    job_type: run
+    organization: "Red Hat network organization"
+    project: "Workshop Project"
+    playbook: "1-1-dynamic_inventory/netbox_facts.yml"
+    inventory: "Netbox Inventory"
+    execution_environment: "Network EE"
+    credentials:
+      - "Containerlab_Network Credential"
+    state: present
+    controller_host: "{{ controller_endpoint.rstrip('/') }}"
+    controller_username: "{{ controller_username }}"
+    controller_password: "{{ controller_password }}"
+    validate_certs: "{{ controller_verify_ssl | default(false) }}"
+
+- name: "Job template — 1-1-Dynamic_inventory-Netbox-Remove"
+  ansible.controller.job_template:
+    name: "1-1-Dynamic_inventory-Netbox-Remove"
+    job_type: run
+    organization: "Red Hat network organization"
+    project: "Workshop Project"
+    playbook: "1-1-dynamic_inventory/netbox_remove.yml"
+    inventory: "Workshop Inventory"
+    execution_environment: "Netbox EE"
+    credentials:
+      - "Netbox Credential"
+    state: present
+    controller_host: "{{ controller_endpoint.rstrip('/') }}"
+    controller_username: "{{ controller_username }}"
+    controller_password: "{{ controller_password }}"
+    validate_certs: "{{ controller_verify_ssl | default(false) }}"
+
+- name: "Job template — 1-2-Backups_as_Code-Backup-GIT"
+  ansible.controller.job_template:
+    name: "1-2-Backups_as_Code-Backup-GIT"
+    job_type: run
+    organization: "Red Hat network organization"
+    project: "Workshop Project"
+    playbook: "1-2-backups_as_code/backups.yml"
+    inventory: "Workshop Inventory"
+    execution_environment: "Network EE"
+    credentials:
+      - "Containerlab_Network Credential"
+      - "Controller Credential"
+      - "Gitea Credential"
+    survey_enabled: true
+    survey_spec:
+      name: ""
+      description: ""
+      spec:
+        - question_name: "Enter the name for the backup branch"
+          question_description: ""
+          required: true
+          type: text
+          variable: branch_name
+          min: 1
+          max: 1024
+          new_question: true
+    state: present
+    controller_host: "{{ controller_endpoint.rstrip('/') }}"
+    controller_username: "{{ controller_username }}"
+    controller_password: "{{ controller_password }}"
+    validate_certs: "{{ controller_verify_ssl | default(false) }}"
+
+- name: "Job template — 1-2-Backups_as_Code-Git-Intent"
+  ansible.controller.job_template:
+    name: "1-2-Backups_as_Code-Git-Intent"
+    job_type: run
+    organization: "Red Hat network organization"
+    project: "Workshop Project"
+    playbook: "1-2-backups_as_code/intended.yml"
+    inventory: "Workshop Inventory"
+    execution_environment: "Network EE"
+    credentials:
+      - "Containerlab_Network Credential"
+      - "Gitea Credential"
+    state: present
+    controller_host: "{{ controller_endpoint.rstrip('/') }}"
+    controller_username: "{{ controller_username }}"
+    controller_password: "{{ controller_password }}"
+    validate_certs: "{{ controller_verify_ssl | default(false) }}"
+
+- name: "Job template — 1-2-Backups_as_Code-Git-Restore"
+  ansible.controller.job_template:
+    name: "1-2-Backups_as_Code-Git-Restore"
+    job_type: run
+    organization: "Red Hat network organization"
+    project: "Workshop Project"
+    playbook: "1-2-backups_as_code/restore_selection.yml"
+    inventory: "Workshop Inventory"
+    execution_environment: "Network EE"
+    credentials:
+      - "Containerlab_Network Credential"
+      - "Gitea Credential"
+    state: present
+    controller_host: "{{ controller_endpoint.rstrip('/') }}"
+    controller_username: "{{ controller_username }}"
+    controller_password: "{{ controller_password }}"
+    validate_certs: "{{ controller_verify_ssl | default(false) }}"
+
+- name: "Job template — 1-2-Backups_as_Code-Git-Restore-Artifact"
+  ansible.controller.job_template:
+    name: "1-2-Backups_as_Code-Git-Restore-Artifact"
+    job_type: run
+    organization: "Red Hat network organization"
+    project: "Workshop Project"
+    playbook: "1-2-backups_as_code/restore.yml"
+    inventory: "Workshop Inventory"
+    execution_environment: "Network EE"
+    credentials:
+      - "Containerlab_Network Credential"
+      - "Gitea Credential"
+    state: present
+    controller_host: "{{ controller_endpoint.rstrip('/') }}"
+    controller_username: "{{ controller_username }}"
+    controller_password: "{{ controller_password }}"
+    validate_certs: "{{ controller_verify_ssl | default(false) }}"
+
+- name: "Job template — 1-3-Network_Compliance-Check"
+  ansible.controller.job_template:
+    name: "1-3-Network_Compliance-Check"
+    job_type: check
+    organization: "Red Hat network organization"
+    project: "Workshop Project"
+    playbook: "1-3-network_compliance/compliance_check.yml"
+    inventory: "Workshop Inventory"
+    execution_environment: "Network EE"
+    credentials:
+      - "Containerlab_Network Credential"
+    diff_mode: true
+    state: present
+    controller_host: "{{ controller_endpoint.rstrip('/') }}"
+    controller_username: "{{ controller_username }}"
+    controller_password: "{{ controller_password }}"
+    validate_certs: "{{ controller_verify_ssl | default(false) }}"
+
+- name: "Job template — 1-3-Network_Compliance-Run"
+  ansible.controller.job_template:
+    name: "1-3-Network_Compliance-Run"
+    job_type: run
+    organization: "Red Hat network organization"
+    project: "Workshop Project"
+    playbook: "1-3-network_compliance/compliance_run.yml"
+    inventory: "Workshop Inventory"
+    execution_environment: "Network EE"
+    credentials:
+      - "Containerlab_Network Credential"
+    state: present
+    controller_host: "{{ controller_endpoint.rstrip('/') }}"
+    controller_username: "{{ controller_username }}"
+    controller_password: "{{ controller_password }}"
+    validate_certs: "{{ controller_verify_ssl | default(false) }}"
+
+- name: "Job template — 1-4-Base_Configs-Deploy"
+  ansible.controller.job_template:
+    name: "1-4-Base_Configs-Deploy"
+    job_type: run
+    organization: "Red Hat network organization"
+    project: "Workshop Project"
+    playbook: "1-4-base_configs/deploy_fabric.yml"
+    inventory: "Workshop Inventory"
+    execution_environment: "Network EE"
+    credentials:
+      - "Containerlab_Network Credential"
+    state: present
+    controller_host: "{{ controller_endpoint.rstrip('/') }}"
+    controller_username: "{{ controller_username }}"
+    controller_password: "{{ controller_password }}"
+    validate_certs: "{{ controller_verify_ssl | default(false) }}"
+
+- name: "Job template — 1-4-Base_Configs-Test"
+  ansible.controller.job_template:
+    name: "1-4-Base_Configs-Test"
+    job_type: run
+    organization: "Red Hat network organization"
+    project: "Workshop Project"
+    playbook: "1-4-base_configs/test_base_connectivity.yml"
+    inventory: "Workshop Inventory"
+    execution_environment: "Network EE"
+    credentials:
+      - "Containerlab_Network Credential"
+    state: present
+    controller_host: "{{ controller_endpoint.rstrip('/') }}"
+    controller_username: "{{ controller_username }}"
+    controller_password: "{{ controller_password }}"
+    validate_certs: "{{ controller_verify_ssl | default(false) }}"
+
+- name: "Job template — 1-4-Base_Configs-Deploy-Error"
+  ansible.controller.job_template:
+    name: "1-4-Base_Configs-Deploy-Error"
+    job_type: run
+    organization: "Red Hat network organization"
+    project: "Workshop Project"
+    playbook: "1-4-base_configs/broken_base_fabric.yml"
+    inventory: "Workshop Inventory"
+    execution_environment: "Network EE"
+    credentials:
+      - "Containerlab_Network Credential"
+    state: present
+    controller_host: "{{ controller_endpoint.rstrip('/') }}"
+    controller_username: "{{ controller_username }}"
+    controller_password: "{{ controller_password }}"
+    validate_certs: "{{ controller_verify_ssl | default(false) }}"
+
+- name: "Job template — 1-5-Underlay_Configs-Deploy"
+  ansible.controller.job_template:
+    name: "1-5-Underlay_Configs-Deploy"
+    job_type: run
+    organization: "Red Hat network organization"
+    project: "Workshop Project"
+    playbook: "1-5-underlay_configs/deploy_underlay.yml"
+    inventory: "Workshop Inventory"
+    execution_environment: "Network EE"
+    credentials:
+      - "Containerlab_Network Credential"
+    state: present
+    controller_host: "{{ controller_endpoint.rstrip('/') }}"
+    controller_username: "{{ controller_username }}"
+    controller_password: "{{ controller_password }}"
+    validate_certs: "{{ controller_verify_ssl | default(false) }}"
+
+- name: "Job template — 1-5-Underlay_Configs-Test"
+  ansible.controller.job_template:
+    name: "1-5-Underlay_Configs-Test"
+    job_type: run
+    organization: "Red Hat network organization"
+    project: "Workshop Project"
+    playbook: "1-5-underlay_configs/underlay_test.yml"
+    inventory: "Workshop Inventory"
+    execution_environment: "Network EE"
+    credentials:
+      - "Containerlab_Network Credential"
+    state: present
+    controller_host: "{{ controller_endpoint.rstrip('/') }}"
+    controller_username: "{{ controller_username }}"
+    controller_password: "{{ controller_password }}"
+    validate_certs: "{{ controller_verify_ssl | default(false) }}"
+
+- name: "Job template — 1-6-Overlay_Configs-Deploy"
+  ansible.controller.job_template:
+    name: "1-6-Overlay_Configs-Deploy"
+    job_type: run
+    organization: "Red Hat network organization"
+    project: "Workshop Project"
+    playbook: "1-6-overlay_configs/deploy_overlay.yml"
+    inventory: "Workshop Inventory"
+    execution_environment: "Network EE"
+    credentials:
+      - "Containerlab_Network Credential"
+    state: present
+    controller_host: "{{ controller_endpoint.rstrip('/') }}"
+    controller_username: "{{ controller_username }}"
+    controller_password: "{{ controller_password }}"
+    validate_certs: "{{ controller_verify_ssl | default(false) }}"
+
+- name: "Job template — 1-6-Overlay_Configs-Test"
+  ansible.controller.job_template:
+    name: "1-6-Overlay_Configs-Test"
+    job_type: run
+    organization: "Red Hat network organization"
+    project: "Workshop Project"
+    playbook: "1-6-overlay_configs/overlay_test.yml"
+    inventory: "Workshop Inventory"
+    execution_environment: "Network EE"
+    credentials:
+      - "Containerlab_Network Credential"
+    state: present
+    controller_host: "{{ controller_endpoint.rstrip('/') }}"
+    controller_username: "{{ controller_username }}"
+    controller_password: "{{ controller_password }}"
+    validate_certs: "{{ controller_verify_ssl | default(false) }}"
+
+- name: "Job template — 1-7-Tuning_For_Scale"
+  ansible.controller.job_template:
+    name: "1-7-Tuning_For_Scale"
+    job_type: run
+    organization: "Red Hat network organization"
+    project: "Workshop Project"
+    playbook: "1-7-tuning_for_scale/configure_snmp.yml"
+    inventory: "Workshop Inventory"
+    execution_environment: "Network EE"
+    credentials:
+      - "Containerlab_Network Credential"
+    state: present
+    controller_host: "{{ controller_endpoint.rstrip('/') }}"
+    controller_username: "{{ controller_username }}"
+    controller_password: "{{ controller_password }}"
+    validate_certs: "{{ controller_verify_ssl | default(false) }}"
+
+# ── Workflows ────────────────────────────────────────────────────────────────────
+- name: "Workflow — 1-3-Network-Complaince-Workflow"
+  ansible.controller.workflow_job_template:
+    name: "1-3-Network-Complaince-Workflow"
+    organization: "Red Hat network organization"
+    inventory: "Workshop Inventory"
+    state: present
+    controller_host: "{{ controller_endpoint.rstrip('/') }}"
+    controller_username: "{{ controller_username }}"
+    controller_password: "{{ controller_password }}"
+    validate_certs: "{{ controller_verify_ssl | default(false) }}"
+
+- name: "Node — Compliance Run"
+  ansible.controller.workflow_job_template_node:
+    identifier: "Compliance Run"
+    workflow: "1-3-Network-Complaince-Workflow"
+    unified_job_template: "1-3-Network_Compliance-Run"
+    organization: "Red Hat network organization"
+    state: present
+    controller_host: "{{ controller_endpoint.rstrip('/') }}"
+    controller_username: "{{ controller_username }}"
+    controller_password: "{{ controller_password }}"
+    validate_certs: "{{ controller_verify_ssl | default(false) }}"
+
+- name: "Node — Human Approval"
+  ansible.controller.workflow_job_template_node:
+    identifier: "Human Approval"
+    workflow: "1-3-Network-Complaince-Workflow"
+    organization: "Red Hat network organization"
+    approval_node:
+      name: "Human Approval"
+      timeout: 0
+    state: present
+    controller_host: "{{ controller_endpoint.rstrip('/') }}"
+    controller_username: "{{ controller_username }}"
+    controller_password: "{{ controller_password }}"
+    validate_certs: "{{ controller_verify_ssl | default(false) }}"
+
+- name: "Link — Human Approval to Compliance Run"
+  ansible.controller.workflow_job_template_node:
+    identifier: "Human Approval"
+    workflow: "1-3-Network-Complaince-Workflow"
+    organization: "Red Hat network organization"
+    # The approval_node dictionary has been removed here
+    success_nodes:
+      - "Compliance Run"
+    state: present
+    controller_host: "{{ controller_endpoint.rstrip('/') }}"
+    controller_username: "{{ controller_username }}"
+    controller_password: "{{ controller_password }}"
+    validate_certs: "{{ controller_verify_ssl | default(false) }}"
+  ignore_errors: true  # Ignore errors if the link already exists
+
+- name: "Node — Compliance Check"
+  ansible.controller.workflow_job_template_node:
+    identifier: "Compliance Check"
+    workflow: "1-3-Network-Complaince-Workflow"
+    unified_job_template: "1-3-Network_Compliance-Check"
+    organization: "Red Hat network organization"
+    success_nodes:
+      - "Human Approval"
+    state: present
+    controller_host: "{{ controller_endpoint.rstrip('/') }}"
+    controller_username: "{{ controller_username }}"
+    controller_password: "{{ controller_password }}"
+    validate_certs: "{{ controller_verify_ssl | default(false) }}"
+
+- name: "Workflow — 1-4-Base_Configs-Workflow"
+  ansible.controller.workflow_job_template:
+    name: "1-4-Base_Configs-Workflow"
+    organization: "Red Hat network organization"
+    inventory: "Workshop Inventory"
+    state: present
+    controller_host: "{{ controller_endpoint.rstrip('/') }}"
+    controller_username: "{{ controller_username }}"
+    controller_password: "{{ controller_password }}"
+    validate_certs: "{{ controller_verify_ssl | default(false) }}"
+
+- name: "Node — Restore (Base Configs)"
+  ansible.controller.workflow_job_template_node:
+    identifier: "Restore"
+    workflow: "1-4-Base_Configs-Workflow"
+    unified_job_template: "1-2-Backups_as_Code-Git-Restore-Artifact"
+    organization: "Red Hat network organization"
+    state: present
+    controller_host: "{{ controller_endpoint.rstrip('/') }}"
+    controller_username: "{{ controller_username }}"
+    controller_password: "{{ controller_password }}"
+    validate_certs: "{{ controller_verify_ssl | default(false) }}"
+
+- name: "Node — Test (Base Configs)"
+  ansible.controller.workflow_job_template_node:
+    identifier: "Test"
+    workflow: "1-4-Base_Configs-Workflow"
+    unified_job_template: "1-4-Base_Configs-Test"
+    organization: "Red Hat network organization"
+    failure_nodes:
+      - "Restore"
+    state: present
+    controller_host: "{{ controller_endpoint.rstrip('/') }}"
+    controller_username: "{{ controller_username }}"
+    controller_password: "{{ controller_password }}"
+    validate_certs: "{{ controller_verify_ssl | default(false) }}"
+
+- name: "Node — Deploy (Base Configs)"
+  ansible.controller.workflow_job_template_node:
+    identifier: "Deploy"
+    workflow: "1-4-Base_Configs-Workflow"
+    unified_job_template: "1-4-Base_Configs-Deploy"
+    organization: "Red Hat network organization"
+    success_nodes:
+      - "Test"
+    state: present
+    controller_host: "{{ controller_endpoint.rstrip('/') }}"
+    controller_username: "{{ controller_username }}"
+    controller_password: "{{ controller_password }}"
+    validate_certs: "{{ controller_verify_ssl | default(false) }}"
+
+- name: "Node — Backups (Base Configs)"
+  ansible.controller.workflow_job_template_node:
+    identifier: "Backups"
+    workflow: "1-4-Base_Configs-Workflow"
+    unified_job_template: "1-2-Backups_as_Code-Backup-GIT"
+    organization: "Red Hat network organization"
+    extra_data:
+      branch_name: "base_configs"
+    success_nodes:
+      - "Deploy"
+    state: present
+    controller_host: "{{ controller_endpoint.rstrip('/') }}"
+    controller_username: "{{ controller_username }}"
+    controller_password: "{{ controller_password }}"
+    validate_certs: "{{ controller_verify_ssl | default(false) }}"
+
+- name: "Workflow — 1-4-Base_Configs-Workflow-Error"
+  ansible.controller.workflow_job_template:
+    name: "1-4-Base_Configs-Workflow-Error"
+    organization: "Red Hat network organization"
+    inventory: "Workshop Inventory"
+    state: present
+    controller_host: "{{ controller_endpoint.rstrip('/') }}"
+    controller_username: "{{ controller_username }}"
+    controller_password: "{{ controller_password }}"
+    validate_certs: "{{ controller_verify_ssl | default(false) }}"
+
+- name: "Node — Restore (Base Configs Error)"
+  ansible.controller.workflow_job_template_node:
+    identifier: "Restore"
+    workflow: "1-4-Base_Configs-Workflow-Error"
+    unified_job_template: "1-2-Backups_as_Code-Git-Restore-Artifact"
+    organization: "Red Hat network organization"
+    state: present
+    controller_host: "{{ controller_endpoint.rstrip('/') }}"
+    controller_username: "{{ controller_username }}"
+    controller_password: "{{ controller_password }}"
+    validate_certs: "{{ controller_verify_ssl | default(false) }}"
+
+- name: "Node — Test (Base Configs Error)"
+  ansible.controller.workflow_job_template_node:
+    identifier: "Test"
+    workflow: "1-4-Base_Configs-Workflow-Error"
+    unified_job_template: "1-4-Base_Configs-Test"
+    organization: "Red Hat network organization"
+    failure_nodes:
+      - "Restore"
+    state: present
+    controller_host: "{{ controller_endpoint.rstrip('/') }}"
+    controller_username: "{{ controller_username }}"
+    controller_password: "{{ controller_password }}"
+    validate_certs: "{{ controller_verify_ssl | default(false) }}"
+
+- name: "Node — Deploy (Base Configs Error)"
+  ansible.controller.workflow_job_template_node:
+    identifier: "Deploy"
+    workflow: "1-4-Base_Configs-Workflow-Error"
+    unified_job_template: "1-4-Base_Configs-Deploy-Error"
+    organization: "Red Hat network organization"
+    success_nodes:
+      - "Test"
+    state: present
+    controller_host: "{{ controller_endpoint.rstrip('/') }}"
+    controller_username: "{{ controller_username }}"
+    controller_password: "{{ controller_password }}"
+    validate_certs: "{{ controller_verify_ssl | default(false) }}"
+
+- name: "Node — Backups (Base Configs Error)"
+  ansible.controller.workflow_job_template_node:
+    identifier: "Backups"
+    workflow: "1-4-Base_Configs-Workflow-Error"
+    unified_job_template: "1-2-Backups_as_Code-Backup-GIT"
+    organization: "Red Hat network organization"
+    extra_data:
+      branch_name: "base_configs_error"
+    success_nodes:
+      - "Deploy"
+    state: present
+    controller_host: "{{ controller_endpoint.rstrip('/') }}"
+    controller_username: "{{ controller_username }}"
+    controller_password: "{{ controller_password }}"
+    validate_certs: "{{ controller_verify_ssl | default(false) }}"
+
+- name: "Workflow — 1-5-Underlay_Configs-Workflow"
+  ansible.controller.workflow_job_template:
+    name: "1-5-Underlay_Configs-Workflow"
+    organization: "Red Hat network organization"
+    inventory: "Workshop Inventory"
+    state: present
+    controller_host: "{{ controller_endpoint.rstrip('/') }}"
+    controller_username: "{{ controller_username }}"
+    controller_password: "{{ controller_password }}"
+    validate_certs: "{{ controller_verify_ssl | default(false) }}"
+
+- name: "Node — Restore (Underlay Configs)"
+  ansible.controller.workflow_job_template_node:
+    identifier: "Restore"
+    workflow: "1-5-Underlay_Configs-Workflow"
+    unified_job_template: "1-2-Backups_as_Code-Git-Restore-Artifact"
+    organization: "Red Hat network organization"
+    state: present
+    controller_host: "{{ controller_endpoint.rstrip('/') }}"
+    controller_username: "{{ controller_username }}"
+    controller_password: "{{ controller_password }}"
+    validate_certs: "{{ controller_verify_ssl | default(false) }}"
+
+- name: "Node — Test (Underlay Configs)"
+  ansible.controller.workflow_job_template_node:
+    identifier: "Test"
+    workflow: "1-5-Underlay_Configs-Workflow"
+    unified_job_template: "1-5-Underlay_Configs-Test"
+    organization: "Red Hat network organization"
+    failure_nodes:
+      - "Restore"
+    state: present
+    controller_host: "{{ controller_endpoint.rstrip('/') }}"
+    controller_username: "{{ controller_username }}"
+    controller_password: "{{ controller_password }}"
+    validate_certs: "{{ controller_verify_ssl | default(false) }}"
+
+- name: "Node — Deploy (Underlay Configs)"
+  ansible.controller.workflow_job_template_node:
+    identifier: "Deploy"
+    workflow: "1-5-Underlay_Configs-Workflow"
+    unified_job_template: "1-5-Underlay_Configs-Deploy"
+    organization: "Red Hat network organization"
+    success_nodes:
+      - "Test"
+    state: present
+    controller_host: "{{ controller_endpoint.rstrip('/') }}"
+    controller_username: "{{ controller_username }}"
+    controller_password: "{{ controller_password }}"
+    validate_certs: "{{ controller_verify_ssl | default(false) }}"
+
+- name: "Node — Backups (Underlay Configs)"
+  ansible.controller.workflow_job_template_node:
+    identifier: "Backups"
+    workflow: "1-5-Underlay_Configs-Workflow"
+    unified_job_template: "1-2-Backups_as_Code-Backup-GIT"
+    organization: "Red Hat network organization"
+    extra_data:
+      branch_name: "underlay_configs"
+    success_nodes:
+      - "Deploy"
+    state: present
+    controller_host: "{{ controller_endpoint.rstrip('/') }}"
+    controller_username: "{{ controller_username }}"
+    controller_password: "{{ controller_password }}"
+    validate_certs: "{{ controller_verify_ssl | default(false) }}"
+
+- name: "Workflow — 1-6-Overlay_Configs-Workflow"
+  ansible.controller.workflow_job_template:
+    name: "1-6-Overlay_Configs-Workflow"
+    organization: "Red Hat network organization"
+    inventory: "Workshop Inventory"
+    state: present
+    controller_host: "{{ controller_endpoint.rstrip('/') }}"
+    controller_username: "{{ controller_username }}"
+    controller_password: "{{ controller_password }}"
+    validate_certs: "{{ controller_verify_ssl | default(false) }}"
+
+- name: "Node — Restore (Overlay Configs)"
+  ansible.controller.workflow_job_template_node:
+    identifier: "Restore"
+    workflow: "1-6-Overlay_Configs-Workflow"
+    unified_job_template: "1-2-Backups_as_Code-Git-Restore-Artifact"
+    organization: "Red Hat network organization"
+    state: present
+    controller_host: "{{ controller_endpoint.rstrip('/') }}"
+    controller_username: "{{ controller_username }}"
+    controller_password: "{{ controller_password }}"
+    validate_certs: "{{ controller_verify_ssl | default(false) }}"
+
+- name: "Node — Test (Overlay Configs)"
+  ansible.controller.workflow_job_template_node:
+    identifier: "Test"
+    workflow: "1-6-Overlay_Configs-Workflow"
+    unified_job_template: "1-6-Overlay_Configs-Test"
+    organization: "Red Hat network organization"
+    failure_nodes:
+      - "Restore"
+    state: present
+    controller_host: "{{ controller_endpoint.rstrip('/') }}"
+    controller_username: "{{ controller_username }}"
+    controller_password: "{{ controller_password }}"
+    validate_certs: "{{ controller_verify_ssl | default(false) }}"
+
+- name: "Node — Deploy (Overlay Configs)"
+  ansible.controller.workflow_job_template_node:
+    identifier: "Deploy"
+    workflow: "1-6-Overlay_Configs-Workflow"
+    unified_job_template: "1-6-Overlay_Configs-Deploy"
+    organization: "Red Hat network organization"
+    success_nodes:
+      - "Test"
+    state: present
+    controller_host: "{{ controller_endpoint.rstrip('/') }}"
+    controller_username: "{{ controller_username }}"
+    controller_password: "{{ controller_password }}"
+    validate_certs: "{{ controller_verify_ssl | default(false) }}"
+
+- name: "Node — Backups (Overlay Configs)"
+  ansible.controller.workflow_job_template_node:
+    identifier: "Backups"
+    workflow: "1-6-Overlay_Configs-Workflow"
+    unified_job_template: "1-2-Backups_as_Code-Backup-GIT"
+    organization: "Red Hat network organization"
+    extra_data:
+      branch_name: "overlay_configs"
+    success_nodes:
+      - "Deploy"
+    state: present
+    controller_host: "{{ controller_endpoint.rstrip('/') }}"
+    controller_username: "{{ controller_username }}"
+    controller_password: "{{ controller_password }}"
+    validate_certs: "{{ controller_verify_ssl | default(false) }}"
+
+# ── Teams ────────────────────────────────────────────────────────────────────
+- name: Create teams
+  ansible.controller.team:
+    name: "{{ item.name }}"
+    description: "{{ item.description }}"
+    organization: "{{ item.organization }}"
+    state: present
+    controller_host: "{{ controller_endpoint.rstrip('/') }}"
+    controller_username: "{{ controller_username }}"
+    controller_password: "{{ controller_password }}"
+    validate_certs: "{{ controller_verify_ssl | default(false) }}"
+  loop:
+    - { name: "Netops", description: "Network Ops Team", organization: "Red Hat network organization" }
+    - { name: "Netadmin", description: "Network Admin Team", organization: "Red Hat network organization" }
+    - { name: "Compute T1", description: "Computer T1 Team", organization: "Red Hat compute organization" }
+    - { name: "Compute T2", description: "Computer T2 Team", organization: "Red Hat compute organization" }
+
+# ── Users ────────────────────────────────────────────────────────────────────
+# AAP 2.6: ansible.controller.user creates Controller-level users that sync
+# to the gateway with "Password Disabled".  We must PATCH the gateway copy
+# via /api/gateway/v1/ to set a real password so users can log in.
+
+- name: Workshop user list
+  ansible.builtin.set_fact:
+    workshop_users:
+      - { username: "network-operator", email: "nwops@redhat.com", first_name: "Issac", last_name: "Assimov" }
+      - { username: "network-admin", email: "nwadmin@redhat.com", first_name: "Larry", last_name: "Niven" }
+      - { username: "bbelcher", email: "bbelcher@redhat.com", first_name: "Bob", last_name: "Belcher", superuser: true }
+      - { username: "tbelcher", email: "tbelcher@redhat.com", first_name: "Tina", last_name: "Belcher" }
+      - { username: "lbelcher", email: "lbelcher@redhat.com", first_name: "Louise", last_name: "Belcher" }
+      - { username: "libelcher", email: "libelcher@redhat.com", first_name: "Linda", last_name: "Belcher" }
+      - { username: "gbelcher", email: "gbelcher@redhat.com", first_name: "Gene", last_name: "Belcher" }
+
+- name: Create workshop users (controller)
+  ansible.controller.user:
+    username: "{{ item.username }}"
+    password: "{{ workshop_admin_password }}"
+    email: "{{ item.email }}"
+    first_name: "{{ item.first_name }}"
+    last_name: "{{ item.last_name }}"
+    superuser: "{{ item.superuser | default(false) }}"
+    state: present
+    controller_host: "{{ controller_endpoint.rstrip('/') }}"
+    controller_username: "{{ controller_username }}"
+    controller_password: "{{ controller_password }}"
+    validate_certs: "{{ controller_verify_ssl | default(false) }}"
+  loop: "{{ workshop_users }}"
+  loop_control:
+    label: "{{ item.username }}"
+
+- name: Look up workshop users in gateway
+  ansible.builtin.uri:
+    url: "{{ controller_endpoint.rstrip('/') }}/api/gateway/v1/users/?username={{ item.username | urlencode }}"
+    method: GET
+    url_username: "{{ controller_username }}"
+    url_password: "{{ controller_password }}"
+    force_basic_auth: true
+    validate_certs: "{{ controller_verify_ssl | default(false) }}"
+  loop: "{{ workshop_users }}"
+  loop_control:
+    label: "{{ item.username }}"
+  register: gateway_user_lookup
+
+- name: Set gateway password for workshop users (required for AAP 2.6 login)
+  ansible.builtin.uri:
+    url: "{{ controller_endpoint.rstrip('/') }}{{ item.json.results[0].url }}"
+    method: PATCH
+    url_username: "{{ controller_username }}"
+    url_password: "{{ controller_password }}"
+    force_basic_auth: true
+    validate_certs: "{{ controller_verify_ssl | default(false) }}"
+    body_format: json
+    body:
+      password: "{{ workshop_admin_password }}"
+    status_code: 200
+  loop: "{{ gateway_user_lookup.results }}"
+  loop_control:
+    label: "{{ item.item.username }}"
+  when: item.json.count > 0
+
+# ── RBAC — pre-wire roles so the workshop RBAC exercise works ────────────────
+# Organization Admin alone (set manually in Step 3) does NOT cascade to
+# job-template-level admin in AAP 2.5+. network-admin needs explicit Admin
+# on the job templates to be able to assign Execute permissions to others.
+
+- name: "RBAC — network-admin gets Admin on all network job templates"
+  ansible.controller.role:
+    users:
+      - "network-admin"
+    role: admin
+    job_templates:
+      - "Network-Commands"
+      - "Network-Reload"
+      - "Network-User"
+      - "Network-Time"
+      - "Network-Report"
+      - "Network-System"
+      - "Network-Facts"
+      - "Network-Backup"
+    state: present
+    controller_host: "{{ controller_endpoint.rstrip('/') }}"
+    controller_username: "{{ controller_username }}"
+    controller_password: "{{ controller_password }}"
+    validate_certs: "{{ controller_verify_ssl | default(false) }}"
+
+- name: "RBAC — network-admin and network-operator are members of the network org"
+  ansible.controller.role:
+    users:
+      - "network-admin"
+      - "network-operator"
+    role: member
+    organizations:
+      - "Red Hat network organization"
+    state: present
+    controller_host: "{{ controller_endpoint.rstrip('/') }}"
+    controller_username: "{{ controller_username }}"
+    controller_password: "{{ controller_password }}"
+    validate_certs: "{{ controller_verify_ssl | default(false) }}"

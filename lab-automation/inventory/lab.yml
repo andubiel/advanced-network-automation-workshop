@@ -1,0 +1,80 @@
+---
+# Override with -e or host/group_vars for your environment.
+# Containerlab SSH: defaults match common RHDP workshop (lab-user, hostname containerlab).
+# Routers: set containerlab_fip to the LoadBalancer IP that fronts ports 2222–2228 before gather_facts.
+
+all:
+  vars:
+    ansible_python_interpreter: auto_silent
+
+  children:
+    containerlab:
+      vars:
+        ansible_ssh_common_args: "-o StrictHostKeyChecking=no"
+      hosts:
+        network_workshop:
+          ansible_host: containerlab
+          ansible_user: rhel
+
+    aap_controller:
+      hosts:
+        localhost:
+          ansible_connection: local
+
+    
+    spines:
+      hosts:
+        spine1:
+          ansible_port: 2226
+        spine2:
+          ansible_port: 2227
+      vars:
+        ansible_host: "{{ containerlab_fip }}"
+        ansible_network_os: arista.eos.eos
+        ansible_connection: ansible.netcommon.network_cli
+        ansible_user: admin
+        ansible_password: admin@123
+        ansible_become: 'true'
+        ansible_become_method: enable
+         
+    leafs:
+      children:
+        arista_leafs:
+          hosts:
+            leaf1:
+              ansible_port: 2222
+            leaf2:
+              ansible_port: 2223
+          vars:
+            ansible_host: "{{ containerlab_fip }}"
+            ansible_network_os: arista.eos.eos
+            ansible_connection: ansible.netcommon.network_cli
+            ansible_user: admin
+            ansible_password: admin@123
+            ansible_become: 'true'
+            ansible_become_method: enable
+    
+        cisco_leafs:
+          hosts:
+            leaf3:
+              ansible_port: 2224
+            leaf4:
+              ansible_port: 2225
+          vars:
+            ansible_host: "{{ containerlab_fip }}"
+            ansible_network_os: cisco.nxos.nxos
+            ansible_connection: ansible.netcommon.network_cli
+            ansible_user: admin
+            ansible_password: admin@123
+             
+    arista:
+      children:
+        spines:
+        arista_leafs:
+
+    cisco:
+      children:
+        cisco_leafs:
+          
+
+    
