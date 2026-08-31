@@ -50,6 +50,8 @@ password: *ansible123!*
 
 **Configure** each of the **three survey questions**
 
+Navigate to | **Templates** | **1-7-Tuning_For_Scale** | **Survey** | **Create survey question** |
+
 Parameters:
 
 * question_name: "Do you want to send an error?"
