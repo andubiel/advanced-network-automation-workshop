@@ -101,7 +101,7 @@ Running the playbook first without errors establishes a baseline -- you see how 
 . Enter the following answers into the prompt:
 
 * "Do you want to send an error?" *no*
-* "Please select the 'Serial' batch percentages" *1 50% 100%*
+* "Please select the 'Serial' batch percentages" *1, 50%, 100%*  **The order matters!**
 * "Please select the Maximum_Failure_Percentage" *0*
 
 image:prompt1.png[Prompt,align="center",link=self,window=blank]
