@@ -56,10 +56,12 @@ Parameters:
 
 * question_name: "Do you want to send an error?"
   * required: true
-  * type: Multiple choice (single select)
+  * type: 
   * choices: yes / no
   * the default is *no*
   * answer variable name: *error*
+
+  **Create survey question**
 
 image:survey1.png[Survey,align="center",link=self,window=blank]
        
@@ -69,13 +71,17 @@ image:survey1.png[Survey,align="center",link=self,window=blank]
   * choices: 1 35% 50% 75% 100%
   * answer variable name: *serials*
 
+  **Create survey question**
+
 image:survey2.png[Survey,align="center",link=self,window=blank]
   
 * question_name: "Please select the Maximum_Failure_Percentage"
   * required: true
-  * type: multiplechoice
+  * type: Multiple choice (single select)
   * choices: 0 5 10 20 50 75 100
   * answer variable name:: *max_fail*
+
+ **Create survey question**
 
 image:survey3.png[Survey,align="center",link=self,window=blank]
           
