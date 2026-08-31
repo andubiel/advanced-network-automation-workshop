@@ -222,7 +222,7 @@ Introducing an intentional failure demonstrates how `max_fail_percentage: 0` pro
 . Enter the following answers into the prompt:
 
 * "Do you want to send an error?" *yes*
-* "Please select the 'Serial' batch percentages" *1 50% 100%*
+* "Please select the 'Serial' batch percentages" *1,50%, 100%*
 * "Please select the Maximum_Failure_Percentage" *0*
 
 == Output Explanation
