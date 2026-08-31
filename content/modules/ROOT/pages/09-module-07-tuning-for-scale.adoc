@@ -48,6 +48,8 @@ Building the survey yourself teaches you how to expose execution controls to ope
 user: *admin* +
 password: *ansible123!*
 
+**Configure** each of the **three survey questions**
+
 Parameters:
 
 * question_name: "Do you want to send an error?"
