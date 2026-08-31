@@ -56,7 +56,7 @@ Parameters:
 
 * question_name: "Do you want to send an error?"
   * required: true
-  * type: multiplechoice
+  * type: Multiple choice (single select)
   * choices: yes / no
   * the default is *no*
   * answer variable name: *error*
@@ -65,7 +65,7 @@ image:survey1.png[Survey,align="center",link=self,window=blank]
        
 * question_name: "Please select the 'Serial' batch percentages"
   * required: true
-  * type: multiselect
+  * type: Multiple Choice (multiple select)
   * choices: 1 35% 50% 75% 100%
   * answer variable name: *serials*
 
