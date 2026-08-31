@@ -511,7 +511,7 @@ The backups-as-code pattern built across this workshop -- automated backups, ver
 
 == Congratulations!
 
-You have completed module 1 of **The Advanced Network Automation** workshop. Over the course of the first eight sections, you built a fully operational multi-vendor EVPN VXLAN fabric from the ground up -- entirely through automation.
+You have completed **Module 1** of **The Advanced Network Automation** workshop. Over the course of the first eight sections, you built a fully operational multi-vendor EVPN VXLAN fabric from the ground up -- entirely through automation.
 
 Here is what you accomplished:
 
