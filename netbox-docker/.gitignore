@@ -11,8 +11,3 @@ configuration/ldap/*
 !configuration/logging.py
 !configuration/plugins.py
 super-linter.log
-
-# Ignore actual env files (secrets)
-env/*.env
-# But keep the templates
-!env/*.env.template
