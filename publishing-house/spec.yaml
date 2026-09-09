@@ -36,7 +36,7 @@ spec:
     - id: module-02
       title: "Backups as Code"
       duration_min: 25
-      status: in_progress
+      status: complete
     - id: module-03
       title: "Network Compliance"
       duration_min: 30
