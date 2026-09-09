@@ -44,7 +44,7 @@ spec:
     - id: module-04
       title: "Base Configurations"
       duration_min: 30
-      status: in_progress
+      status: complete
     - id: module-05
       title: "Underlay Configs"
       duration_min: 30
