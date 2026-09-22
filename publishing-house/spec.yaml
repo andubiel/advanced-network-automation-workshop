@@ -52,7 +52,7 @@ spec:
     - id: module-06
       title: "Overlay Configs"
       duration_min: 30
-      status: not_started
+      status: in_progress
     - id: module-07
       title: "Tuning for Scale"
       duration_min: 25
