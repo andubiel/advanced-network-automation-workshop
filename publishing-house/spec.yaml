@@ -56,7 +56,7 @@ spec:
     - id: module-07
       title: "Tuning for Scale"
       duration_min: 25
-      status: not_started
+      status: in_progress
     - id: module-08
       title: "Configuration Drift and Restore"
       duration_min: 25
