@@ -48,7 +48,7 @@ spec:
     - id: module-05
       title: "Underlay Configs"
       duration_min: 30
-      status: in_progress
+      status: complete
     - id: module-06
       title: "Overlay Configs"
       duration_min: 30
