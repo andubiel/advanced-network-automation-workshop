@@ -1,0 +1,20 @@
+= Conclusion
+
+Congratulations on completing the Advanced Ansible Network Automation Workshop!
+
+== What You Accomplished
+
+Throughout this workshop, you used Red Hat Ansible Automation Platform to build and validate a multi-vendor EVPN VXLAN switching fabric. Along the way, you:
+
+* Configured dynamic inventory with Netbox as a Source of Truth
+* Automated multi-vendor configuration backups to Git
+* Enforced network compliance using resource modules and approval workflows
+* Deployed a full EVPN VXLAN fabric across base, underlay, and overlay layers
+* Tuned Ansible execution controls for safe, scaled deployments
+* Detected and remediated configuration drift using Git-stored intended state
+
+== Next Steps
+
+* Explore the https://docs.ansible.com/ansible/latest/network/index.html[Ansible Network Automation documentation] for additional resource modules and platform support
+* Visit the https://www.redhat.com/en/technologies/management/ansible[Red Hat Ansible Automation Platform] page to learn about enterprise features
+* Try extending the fabric with additional leaf switches or tenants using the patterns from this workshop
