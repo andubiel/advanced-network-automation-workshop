@@ -11,6 +11,7 @@
       ansible.builtin.command:
         cmd: containerlab deploy --reconfigure
         chdir: "{{ clab_dir }}"
+      become: true
       register: clab_deploy
 
     - name: Record last-deployed topology for resume-on-boot
