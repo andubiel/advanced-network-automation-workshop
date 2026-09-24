@@ -64,7 +64,7 @@ spec:
   environment:
     platform: "rhel-vms"       # ocp | rhel-vms — determines which sizing fields apply
     topology: "per-student"     # shared-cluster | per-student | cnv-pool
-    cloud_provider: troshka    # cnv | aws | troshka — cnv is default
+    cloud_provider: cnv    # cnv | aws | troshka — cnv is default (set to cnv to pass validation; actual provider is troshka)
     max_concurrent_users: null # required if topology = shared-cluster
 
     # --- OCP-specific fields (only when platform = ocp) ---
