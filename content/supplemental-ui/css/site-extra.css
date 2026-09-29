@@ -36,3 +36,36 @@ video {
     width: 100%;
     background-color: #131313;
 }
+
+/* Nav panel toggle */
+.nav-container {
+    transition: margin-left 0.25s ease, width 0.25s ease;
+}
+.nav-container.is-collapsed {
+    margin-left: -260px;
+}
+.body {
+    transition: padding-left 0.25s ease;
+}
+.body.nav-collapsed {
+    padding-left: 0;
+}
+#nav-toggle-btn {
+    position: fixed;
+    top: 64px;
+    left: 4px;
+    z-index: 100;
+    background: #1a1a1a;
+    color: #fff;
+    border: 1px solid #444;
+    border-radius: 4px;
+    padding: 4px 8px;
+    cursor: pointer;
+    font-size: 14px;
+    line-height: 1;
+    transition: left 0.25s ease;
+}
+.nav-collapsed #nav-toggle-btn,
+body.nav-collapsed #nav-toggle-btn {
+    left: 4px;
+}
