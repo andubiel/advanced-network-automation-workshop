@@ -76,14 +76,13 @@ An Ansible inventory defines _what_ you automate against. Without an inventory, 
 
 The scope of a `play` within a `playbook` is limited to the groups of hosts declared within an Ansible **inventory**. Ansible supports multiple link:http://docs.ansible.com/ansible/latest/intro_inventory.html[inventory^] types. An inventory could be a simple flat file with a collection of hosts defined within it, or it could be a dynamic script (potentially querying a CMDB backend) that generates a list of devices to run the playbook against.
 
-In this lab, you will work with an automation controller GUI-based inventory called "Workshop Inventory". The "Workshop Inventory" was pre-configured during the lab setup using controller as code.
+With the exception of this first lab, where we will use Netbox as an inventory source, you will mostly work with an automation controller GUI-based inventory called "Workshop Inventory". The "Workshop Inventory" was pre-configured during the lab setup using controller as code.
 
 NOTE: **Level Set -- What is Controller as Code?** +                                                                                                             
 Controller as Code is the practice of defining your entire Ansible Automation Platform configuration -- inventories, credentials, job templates, workflows, team
 s, and RBAC -- as Ansible playbooks rather than clicking through the GUI. It uses the `ansible.controller` collection, which provides modules like `ansible.cont
 roller.inventory`, `ansible.controller.group`, `ansible.controller.host`, and `ansible.controller.job_template` to create and manage controller objects programm
-atically. This approach makes your automation platform reproducible, version-controlled, and auditable: you can rebuild a controller from scratch, track every c
-hange in Git, and promote configurations consistently across dev, staging, and production environments.        
+atically. This approach makes your automation platform reproducible, version-controlled, and auditable: you can rebuild a controller from scratch, track every change in Git, and promote configurations consistently across dev, staging, and production environments.        
 
 The snippet below is from the playbook `controller_workshop_objects.yml` and shows how the Workshop Inventory was pre-provisioned for your pod using controller as code. Notice how the groups, hosts, and related groups are constructed using modules from the `ansible.controller` collection:
 
@@ -216,13 +215,13 @@ NOTE: **Level Set -- What is NetBox?** +
 NetBox is an open-source web application that serves as an Infrastructure Resource Modeling (IRM) tool and source of truth for network infrastructure. It's designed to document and manage IP address management (IPAM), data center infrastructure (racks, devices, cables), network equipment inventory, virtualization resources, and circuits and connections. +
  +
 **Why use NetBox as an Ansible inventory source?** +
-Instead of maintaining static YAML/INI files, Ansible queries NetBox in real-time. Inventory automatically reflects infrastructure changes without manual updates, eliminating drift between documentation and automation.
+Instead of maintaining static YAML/INI files, Ansible queries NetBox in real-time. The dynamic inventory automatically reflects infrastructure changes without manual updates, eliminating drift between documentation and automation.
 
 == Step 6: Create API Token for NetBox
 
 An API token is required for Ansible to authenticate with NetBox programmatically. Without it, the dynamic inventory plugin cannot query NetBox for device data.
 
-. Navigate to *Admin* | *API Tokens* | *Add a Token* | *Create*
+. Navigate to the top right corner *Admin* | *API Tokens* | *Add a Token* | *Create*
 +
 image::add_new_token.png[Token,align="center",link=self,window=_blank]
 
@@ -293,12 +292,11 @@ image::netbox_devices.png[Devices,align="center",link=self,window=_blank]
 
 == Step 11: Sync the NetBox Inventory from the Automation Controller 
 Return to the Ansible Automation Platform tab
-+
+
 Syncing pulls the latest device data from NetBox into the Automation Controller's inventory. This is the step that turns NetBox from a documentation tool into a live inventory source -- after the sync, every playbook run targets the devices and variables that NetBox defines.
 
-. Navigate to *Inventories* | *NetBox Inventory* | *Inventory Sources* | *netbox_source* | *Sync inventory source*
-. Ensure that your inventory sync is a success. If it fails, check the API Token that was pasted into the credentials.
-. Review the source settings to understand the source configuration in AAP. Available options for an inventory source include:
+. Navigate to *Inventories* | *NetBox Inventory* | *Sources* | *netbox-source* | *Sync inventory source*
+. Click Edit netbox-source to review the source settings. The available options for an inventory source include:
 +
 --
 * **Source** -- the inventory plugin type (e.g., NetBox, AWS, Azure, VMware, GCP, Red Hat Satellite, OpenStack, or a custom script)
@@ -313,6 +311,8 @@ Syncing pulls the latest device data from NetBox into the Automation Controller'
 * **Execution Environment** -- the container image used to run the sync
 --
 +
+. Ensure that your inventory sync is a success. If it fails, check the API Token that was pasted into the credentials.
+
 image::inventory_source.png[Source,align="center",link=self,window=_blank]
 +
 At this point there should be groups and hosts available.
@@ -353,6 +353,8 @@ enable_plugins = host_list, script, yaml, ini, auto
 ----
 
 == Step 12: Launch the *1-1-Dynamic_Inventory-Netbox-Facts* Job Template
+
+** Return to the Ansible Auitomation Platform tab**
 
 Gathering facts proves that the entire pipeline works end-to-end: the NetBox dynamic inventory resolves the correct hosts and connection details, and Ansible can reach and authenticate to each device. The facts output also reveals what data is available for use in future playbooks -- interfaces, neighbors, hardware details, and software versions.
 

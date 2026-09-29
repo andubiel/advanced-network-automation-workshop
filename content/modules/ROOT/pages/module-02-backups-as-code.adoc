@@ -48,7 +48,7 @@ image::initial_config.png[Initial,align="center",link=self,window=_blank]
 
 Verifying that backup files landed in the correct Git branch and directory structure confirms the backup workflow completed successfully. In production, this is how you prove that a valid restore point exists before making changes.
 
-. Access the *Gitea* tab and log in
+. Access the *Gitea Repo* tab and log in
 +
 user: *gitea* +
 password: *gitea123*
