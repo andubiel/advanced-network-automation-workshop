@@ -19,27 +19,3 @@ video {
 </style>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 <link rel="icon" href="{{uiRootPath}}/img/favicon.ico" type="image/x-icon">
-<script>
-document.addEventListener('DOMContentLoaded', function () {
-  var nav = document.querySelector('.nav-container') || document.querySelector('.nav');
-  if (!nav) return;
-  var body = document.querySelector('.body') || document.body;
-  var btn = document.createElement('button');
-  btn.id = 'nav-toggle-btn';
-  btn.textContent = '«';
-  btn.title = 'Toggle lab guide nav';
-  document.body.appendChild(btn);
-  var collapsed = localStorage.getItem('nav-collapsed') === 'true';
-  function apply() {
-    nav.classList.toggle('is-collapsed', collapsed);
-    body.classList.toggle('nav-collapsed', collapsed);
-    btn.textContent = collapsed ? '»' : '«';
-  }
-  apply();
-  btn.addEventListener('click', function () {
-    collapsed = !collapsed;
-    localStorage.setItem('nav-collapsed', collapsed);
-    apply();
-  });
-});
-</script>
