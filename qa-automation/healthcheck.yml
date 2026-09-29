@@ -2,7 +2,7 @@
 # HEALTHCHECK — Quick environment readiness check
 # Verifies the bastion host is reachable via SSH and the containerlab
 # topology has no exited nodes. Non-destructive: does not modify any
-# lab state. Should complete in under 60 seconds.
+# lab state. Should complete in under 120 seconds.
 #
 # Exit 0 = healthy, non-zero = unhealthy.
 
