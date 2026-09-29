@@ -72,11 +72,13 @@ image:create_survey.png[compliance,align="center",link=self,window=blank]
 **Parameters:**
 
 * Which compliance checks to run?
-* multiple select
-* logging
-* ntp
-* variable = *tag*
-* *Enable survey*
+* Multiple Choice (multiple select)
+* Multiple Choice Options (enter between options)
+  * logging
+  * ntp
+* Answer variable name = *tag*
+* Save survey question
+* *Survey enabled* toggle on
 +
 image:question_config.png[compliance,align="center",link=self,window=blank]
 +
